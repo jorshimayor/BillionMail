@@ -141,3 +141,23 @@ scache    unix  -       -       n       -       1       scache
 #mailman   unix  -       n       n       -       -       pipe
 #  flags=FR user=list argv=/usr/lib/mailman/bin/postfix-to-mailman.py
 #  ${nexthop} ${user}
+
+# Fast pool — high reputation IPs, warmed up
+fast1       unix  -       -       n       -       -       smtp
+  -o smtp_bind_address=192.0.2.101
+  -o smtp_helo_name=mail101.yourdomain.com
+  -o syslog_name=postfix-fast1
+
+fast2       unix  -       -       n       -       -       smtp
+  -o smtp_bind_address=192.0.2.102
+  -o smtp_helo_name=mail102.yourdomain.com
+  -o syslog_name=postfix-fast2
+
+# Slow pool — new or cold IPs (warm-up phase)
+warmup1     unix  -       -       n       -       -       smtp
+  -o smtp_bind_address=192.0.2.201
+  -o smtp_destination_concurrency_limit=2
+  -o smtp_destination_rate_delay=1s
+  -o syslog_name=postfix-warmup1
+
+# You can have 50–200 of these easily

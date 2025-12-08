@@ -98,18 +98,36 @@ func (c *ControllerV1) Login(ctx context.Context, req *v1.LoginReq) (res *v1.Log
 		roleNames = append(roleNames, role.RoleName)
 	}
 
-	// Generate JWT token
-	token, _, err := service.JWT().GenerateToken(account.AccountId, account.Username, roleNames)
-	if err != nil {
-		res.SetError(gerror.New("Failed to generate token"))
-		return
-	}
+	// Generate tokens: tenant-aware if tenantId provided, otherwise default
+	var token string
+	var refreshToken string
+	var ttl int64
+	if req.TenantId != 0 {
+		accessToken, newRefreshToken, terr := service.TenantRBAC().GenerateTokens(ctx, account.AccountId, req.TenantId, g.RequestFromCtx(ctx).Header.Get("User-Agent"), clientIp)
+		if terr != nil {
+			res.SetError(gerror.New("Failed to generate tenant tokens"))
+			return
+		}
+		token = accessToken
+		refreshToken = newRefreshToken
+		ttl = 15 * 60 // 15 minutes for tenant access token
+	} else {
+		// Generate JWT token
+		var expiry int64
+		token, expiry, err = service.JWT().GenerateToken(account.AccountId, account.Username, roleNames)
+		if err != nil {
+			res.SetError(gerror.New("Failed to generate token"))
+			return
+		}
 
-	// Generate refresh token
-	refreshToken, err := service.JWT().GenerateRefreshToken(account.AccountId, account.Username)
-	if err != nil {
-		res.SetError(gerror.New("Failed to generate refresh token"))
-		return
+		// Generate refresh token
+		refreshToken, err = service.JWT().GenerateRefreshToken(account.AccountId, account.Username)
+			if err != nil {
+				res.SetError(gerror.New("Failed to generate refresh token"))
+				return
+			}
+
+			ttl = expiry
 	}
 
 	// Prepare response
@@ -118,7 +136,7 @@ func (c *ControllerV1) Login(ctx context.Context, req *v1.LoginReq) (res *v1.Log
 	res.Msg = "Login successful"
 	res.Data.Token = token
 	res.Data.RefreshToken = refreshToken
-	res.Data.TTL = gconv.Int64(service.JWT().AccessExpiry.Seconds())
+	res.Data.TTL = ttl
 
 	// Set account basic information
 	res.Data.AccountInfo.Id = account.AccountId
@@ -172,7 +190,19 @@ func (c *ControllerV1) Logout(ctx context.Context, req *v1.LogoutReq) (res *v1.L
 func (c *ControllerV1) RefreshToken(ctx context.Context, req *v1.RefreshTokenReq) (res *v1.RefreshTokenRes, err error) {
 	res = &v1.RefreshTokenRes{}
 
-	// Verify refresh token
+	// Try tenant-aware refresh first
+	accessToken, newRefreshToken, terr := service.TenantRBAC().RefreshToken(ctx, req.RefreshToken)
+	if terr == nil {
+		res.Success = true
+		res.Code = 0
+		res.Msg = "Token refreshed successfully"
+		res.Data.Token = accessToken
+		res.Data.RefreshToken = newRefreshToken
+		res.Data.TTL = 15 * 60 // tenant access token TTL
+		return
+	}
+
+	// Fallback to default JWT refresh
 	claims, err := service.JWT().ParseToken(req.RefreshToken)
 	if err != nil {
 		res.SetError(gerror.New("Invalid or expired refresh token"))

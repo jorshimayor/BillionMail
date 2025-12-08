@@ -1,72 +1,51 @@
-# See /usr/share/postfix/main.cf.dist for a commented, more complete version
+# ────────────────────────────────
+#  HIGH-VOLUME / MARKETING SETTINGS
+# ────────────────────────────────
 
+# Don't accept mail for these domains locally (critical!)
+mydestination =
 
-# Debian specific:  Specifying a file name will cause the first
-# line of that file to be used as the name.  The Debian default
-# is /etc/mailname.
-#myorigin = /etc/mailname
+# Allow your application servers to inject via submission (587) or direct SMTP after SASL
+mynetworks = 127.0.0.0/8 [::1]/128 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16
+# (adjust to your actual internal networks / Docker / Kubernetes CIDRs)
 
-smtpd_banner = $myhostname ESMTP $mail_name 
-biff = no
+# Global sending limits (tune after testing)
+default_destination_concurrency_limit = 20
+default_destination_rate_delay = 0s
+default_extra_recipient_limit = 100
 
-# appending .domain is the MUA's job.
-append_dot_mydomain = no
+# Very important — per-IP and per-domain throttling
+smtp_destination_concurrency_limit = 10          # max parallel connections to same MX
+smtp_destination_rate_delay = 100ms              # tiny delay = better reputation
+smtp_extra_recipient_limit = 50
 
-# Uncomment the next line to generate "delayed mail" warnings
-#delay_warning_time = 4h
+# Connection caching (huge performance win on Billion Mail forks)
+smtp_connection_cache_on_demand = yes
+smtp_connection_cache_destinations = all
+smtp_connection_reuse_time_limit = 3600s
 
-readme_directory = no
+# Multiple outbound IPs (example with 10 IPs)
+# You can have 100+ — Billion Mail forks handle this extremely well
+smtp_bind_address = 192.0.2.10   # fallback IP
+sender_dependent_default_transport_maps = hash:/etc/postfix/conf/sender_transport.map
 
-# See http://www.postfix.org/COMPATIBILITY_README.html -- default to 3.6 on
-# fresh installs.
-compatibility_level = 3.6
+# Optional but recommended: rotate IPs by sender domain or randomly
+# /etc/postfix/conf/sender_transport.map example:
+#   newsletter@customer1.com   fast1
+#   alerts@customer2.com       fast2
+#   @customer3.com             pool-slow
 
+# Then define the transports (see master.cf section below)
 
-# TLS parameters
-smtpd_tls_cert_file = /etc/ssl/mail/cert.pem
-smtpd_tls_key_file = /etc/ssl/mail/key.pem
-tls_server_sni_maps = hash:/etc/postfix/conf/vmail_ssl.map
-smtpd_tls_security_level=may
+# Bounce & complaint handling
+bounce_notice_recipient = bounces@yoursystem.com
+2bounce_notice_recipient = bounces@yoursystem.com
+notify_classes = resource, software, bounce, 2bounce
 
-smtp_tls_CApath=/etc/ssl/certs
-smtp_tls_security_level=may
-smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+# Better logs for marketing platform
+error_notice_recipient = alerts@yoursystem.com
+delay_notice_recipient = alerts@yoursystem.com
 
-
-smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
-
-alias_maps = hash:/etc/aliases
-alias_database = hash:/etc/aliases
-mydestination = localhost.localdomain, localhost
-relayhost = 
-mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
-mailbox_size_limit = 0
-recipient_delimiter = +
-inet_interfaces = all
-inet_protocols = all
-
-# Sql configuration
-virtual_mailbox_domains = pgsql:/etc/postfix/sql/pgsql_virtual_domains_maps.cf
-virtual_alias_maps = pgsql:/etc/postfix/sql/pgsql_virtual_alias_maps.cf, pgsql:/etc/postfix/sql/pgsql_virtual_alias_domain_maps.cf, pgsql:/etc/postfix/sql/pgsql_virtual_alias_domain_catchall_maps.cf
-virtual_mailbox_maps = pgsql:/etc/postfix/sql/pgsql_virtual_mailbox_maps.cf, pgsql:/etc/postfix/sql/pgsql_virtual_alias_domain_mailbox_maps.cf
-
-# dovecot rspamd
-smtpd_sasl_type = dovecot
-smtpd_sasl_authenticated_header = yes
-smtpd_sasl_path = inet:dovecot:10002
-smtpd_sasl_auth_enable = yes
-virtual_transport = lmtp:inet:dovecot:26
-smtpd_milters = inet:rspamd:11332
-non_smtpd_milters = inet:rspamd:11332
-
-smtpd_recipient_restrictions = permit_sasl_authenticated, permit_mynetworks, reject_unauth_destination
-smtpd_use_tls = yes
-milter_mail_macros = i {mail_addr} {client_addr} {client_name} {auth_authen}
-milter_protocol = 6
-milter_default_action = accept
-message_size_limit = 102400000
-
-
-## Do not add configurations to the following configurations and will be deleted
-## Do not delete the following identification configuration
-# Overrides-configuration #
+# Do NOT truncate bounces (you want the original headers for parsing complaints)
+2bounce_notice_recipient = bounces@yoursystem.com
+enable_original_recipient = no

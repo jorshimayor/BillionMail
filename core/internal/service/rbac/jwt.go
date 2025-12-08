@@ -4,7 +4,6 @@ import (
 	"billionmail-core/internal/consts"
 	"billionmail-core/internal/service/public"
 	"context"
-	"fmt"
 	"github.com/gogf/gf/v2/util/gconv"
 	"strings"
 	"time"
@@ -218,8 +217,33 @@ func (s *JWTService) JWTAuthMiddleware(r *ghttp.Request) {
 		return
 	}
 
-	// Parse token
+	// Parse token (try tenant-aware first)
 	tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+
+	if tenantClaims, terr := TenantRBAC().ValidateToken(r.GetCtx(), tokenString); terr == nil {
+		// Accept only access tokens for auth middleware
+		if tenantClaims.TokenType != "access" {
+			r.Response.WriteJson(resp)
+			r.Exit()
+			return
+		}
+
+		// Set tenant-aware context
+		r.SetCtxVar("accountId", tenantClaims.AccountId)
+		r.SetCtxVar("tenantId", tenantClaims.TenantId)
+		r.SetCtxVar("roles", []string{tenantClaims.Role})
+		r.SetCtxVar("permissions", tenantClaims.Permissions)
+
+		// Update Session
+		if err := r.Session.Set("SignedToken", tokenString); err != nil {
+			g.Log().Warning(r.GetCtx(), "Save SignedToken failed ", err)
+		}
+
+		r.Middleware.Next()
+		return
+	}
+
+	// Fallback: standard JWT
 	claims, err := s.ParseToken(tokenString)
 	if err != nil {
 		//resp.Msg = fmt.Sprintf("invalid token: %s", err.Error())
@@ -231,24 +255,8 @@ func (s *JWTService) JWTAuthMiddleware(r *ghttp.Request) {
 	// Set account info in context
 	r.SetCtxVar("accountId", claims.AccountId)
 	r.SetCtxVar("username", claims.Username)
-
-	// Retrieve roles from cache or database
-	cacheKey := fmt.Sprintf("ACCOUNT_ROLES_%d", claims.AccountId)
-	roles := public.GetCache(cacheKey)
-
-	if roles == nil {
-		roles, err = Account().GetAccountRoles(r.GetCtx(), claims.AccountId)
-		if err != nil {
-			resp.Msg = "failed to get account roles"
-			r.Response.WriteJson(resp)
-			r.Exit()
-			return
-		}
-
-		public.SetCache(cacheKey, roles, 20)
-	} else {
-		r.SetCtxVar("roles", roles)
-	}
+	// Set roles from claims
+	r.SetCtxVar("roles", claims.Roles)
 
 	// Update Session
 	err = r.Session.Set("SignedToken", tokenString)

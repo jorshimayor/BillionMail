@@ -12,6 +12,7 @@ type LoginReq struct {
 	Password       string `p:"password" v:"required#Password cannot be empty" dc:"Password"`
 	ValidateCodeId string `p:"validate_code_id" v:"min-length:1" dc:"Validation code ID"`
 	ValidateCode   string `p:"validate_code" v:"min-length:1" dc:"Validation code"`
+	TenantId       int64  `p:"tenantId" dc:"Tenant ID for tenant-aware login (optional)"`
 }
 
 // LoginRes defines the response for user login

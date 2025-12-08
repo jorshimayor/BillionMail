@@ -102,7 +102,37 @@ func (m *RBACMiddleware) PermissionCheck(r *ghttp.Request) {
 		return
 	}
 
-	// Check if user has the required permission
+	// If tenantId exists in context, use tenant-aware RBAC check
+	tenantIdVar := r.GetCtxVar("tenantId")
+	if tenantIdVar != nil {
+		tenantId := gconv.Int64(tenantIdVar)
+		if tenantId > 0 {
+			hasPermission, err := rbac.TenantRBAC().CheckAccess(r.GetCtx(), tenantId, accountId, resource, action)
+			if err != nil {
+				g.Log().Error(r.GetCtx(), "Tenant permission check error:", err)
+				r.Response.WriteJson(g.Map{
+					"code": 500,
+					"msg":  "Error checking permissions",
+				})
+				r.Exit()
+				return
+			}
+
+			if !hasPermission {
+				r.Response.WriteJson(g.Map{
+					"code": 403,
+					"msg":  "Insufficient permissions",
+				})
+				r.Exit()
+				return
+			}
+
+			r.Middleware.Next()
+			return
+		}
+	}
+
+	// Fallback to global PermissionService check
 	hasPermission, err := m.PermissionService.Check(r.GetCtx(), accountId, module, action, resource)
 	if err != nil {
 		g.Log().Error(r.GetCtx(), "Permission check error:", err)
@@ -147,7 +177,20 @@ func HasPermission(ctx context.Context, module, action, resource string) bool {
 		}
 	}
 
-	// Check specific permission
+	// If tenantId exists in context, use tenant-aware RBAC check
+	if tenantIdVar := ctx.Value("tenantId"); tenantIdVar != nil {
+		tenantId := gconv.Int64(tenantIdVar)
+		if tenantId > 0 {
+			hasPermission, err := rbac.TenantRBAC().CheckAccess(ctx, tenantId, accountId, resource, action)
+			if err != nil {
+				g.Log().Error(ctx, "Tenant permission check error:", err)
+				return false
+			}
+			return hasPermission
+		}
+	}
+
+	// Check specific permission via global service
 	permissionService := rbac.Permission()
 	hasPermission, err := permissionService.Check(ctx, accountId, module, action, resource)
 	if err != nil {
