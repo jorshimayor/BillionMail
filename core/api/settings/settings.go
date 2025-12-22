@@ -24,4 +24,7 @@ type ISettingsV1 interface {
 	DeleteReverseProxyDomain(ctx context.Context, req *v1.DeleteReverseProxyDomainReq) (res *v1.DeleteReverseProxyDomainRes, err error)
 	RegenerateAPIToken(ctx context.Context, req *v1.RegenerateAPITokenReq) (res *v1.RegenerateAPITokenRes, err error)
 	SetAPIDocSwagger(ctx context.Context, req *v1.SetAPIDocSwaggerReq) (res *v1.SetAPIDocSwaggerRes, err error)
+	SetBlacklistAutoScan(ctx context.Context, req *v1.SetBlacklistAutoScanReq) (res *v1.SetBlacklistAutoScanRes, err error)
+	SetBlacklistAlert(ctx context.Context, req *v1.SetBlacklistAlertReq) (res *v1.SetBlacklistAlertRes, err error)
+	SetBlacklistAlertSettings(ctx context.Context, req *v1.SetBlacklistAlertSettingsReq) (res *v1.SetBlacklistAlertSettingsRes, err error)
 }

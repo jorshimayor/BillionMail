@@ -311,6 +311,8 @@
 				"saveOutbox": "保存到发件箱",
 				"ipWarmup": "关联IP预热系统",
 				"ipWarmupTip": "开启后将会限制发件速率",
+				"trackClick": "跟踪点击",
+				"trackOpen": "跟踪打开",
 				"unsubscribeLink": "退订链接",
 				"threads": "线程数",
 				"threadsAuto": "自动",
@@ -819,6 +821,24 @@
 			"title": "设为默认 [{domain}]",
 			"confirm": "确定要将此域名设为默认域名吗？"
 		},
+		"notSpam": {
+			"checkNow": "立即检测",
+			"logs": "日志"
+		},
+		"checkLogs": {
+			"title": "检测日志"
+		},
+		"blacklistDetection": {
+			"title": "黑名单检测",
+			"checking": "正在检测解析到 {ip} 的 {results}，对比 {tested} 个已知黑名单...",
+			"listed": "已列入黑名单数：{count}",
+			"success": "您的 IP 未在 aaPanel 已知的黑名单中",
+			"columns": {
+				"blacklist": "黑名单",
+				"responseIp": "响应 IP",
+				"checkTime": "检测时间"
+			}
+		},
 		"delete": {
 			"title": "删除域名",
 			"confirm": "确定要删除域名【{domain}】吗？",
@@ -902,6 +922,18 @@
 				"title": "步骤4：添加PTR记录",
 				"description1": "（可选）PTR记录用于反向 DNS 查找",
 				"description2": "联系您的IP提供商创建 PTR 记录"
+			},
+			"dkim": {
+				"formatLabel": "DKIM记录格式：",
+				"keySize": {
+					"option2048": "2048位RSA密钥",
+					"option1024": "1024位RSA密钥"
+				},
+				"tips": {
+					"line1": "DKIM记录支持2048位和1024位RSA密钥。",
+					"line2": "建议优先使用2048位密钥以获得更好的安全性。",
+					"line3": "可根据域名服务商的限制进行选择。"
+				}
 			}
 		},
 		"ssl": {
@@ -1073,7 +1105,8 @@
 				"applyingCert": "正在申请证书，请稍候...",
 				"settingDefault": "正在设置默认域名，请稍候...",
 				"settingBrandInfo": "正在设置域名品牌信息，请稍候...",
-				"testingConnection": "正在测试连接，请稍候..."
+				"testingConnection": "正在测试连接，请稍候...",
+				"detecting": "正在检测，请稍候..."
 			}
 		}
 	},
@@ -1385,6 +1418,37 @@
 					"enableContent": "是否开启API设置？",
 					"disableContent": "是否关闭API设置？"
 				}
+			},
+			"notifySettings": {
+				"title": "通知设置",
+				"blacklist": {
+					"title": "当IP/域名被列入黑名单时通知我",
+					"alarmSet": "告警设置",
+					"alarmSettings": {
+						"title": "告警设置",
+						"name": "名称",
+						"senderEmail": "发送人邮箱",
+						"smtpPassword": "SMTP密码",
+						"smtpServer": "SMTP服务器",
+						"port": "端口",
+						"recipientEmail": "收件人邮箱"
+					},
+					"autoCheck": {
+						"title": "自动检测黑名单",
+						"confirm": {
+							"enableTitle": "开启黑名单自动检测",
+							"disableTitle": "关闭黑名单自动检测",
+							"enableContent": "确定要开启自动检测黑名单服务吗？",
+							"disableContent": "确定要关闭自动检测黑名单服务吗？"
+						}
+					}
+				}
+			},
+			"retention": {
+				"title": "邮件保留时间",
+				"currentDays": "{days}天",
+				"trashHint": "垃圾箱邮件保留时间",
+				"day": "天"
 			}
 		},
 		"api": {
@@ -1478,6 +1542,14 @@
 			"ipWhitelist": "IP白名单",
 			"apiNamePlaceholder": "请输入API名称",
 			"ipWhitelistPlaceholder": "多个IP用逗号分隔，为空则不限制",
+			"advancedFeatures": "高级功能",
+			"group": {
+				"label": "收件人分组",
+				"tips": {
+					"choose": "选择分组：所有通过此 API 添加的新联系人，都会被自动放进您选定的组里。",
+					"autoCreate": "不选择分组：系统会自动为这个 API 创建一个全新的、独立的联系人组，用于存放所有新联系人。"
+				}
+			},
 			"validation": {
 				"apiNameRequired": "请输入API名称",
 				"addresserRequired": "请选择发送者",

@@ -17,10 +17,27 @@ export interface MailDomain {
 	email: string
 	hasbrandinfo: number
 	current_usage: number
+	black_check_log: string
 	urls: string[]
 	dns_records: DomainDnsRecords
 	cert_info: DomainCertInfo
 	multi_ip_domains: DomainMultiIp | null
+	black_check_result: DomainBlackCheckResult
+}
+
+export interface DomainBlackCheckResult {
+	time: number
+	results: string
+	ip: string
+	tested: number
+	passed: number
+	invalid: number
+	blacklisted: number
+	black_list: Array<{
+		blacklist: string
+		response: string
+		time: number
+	}>
 }
 
 export interface DomainMultiIp {

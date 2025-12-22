@@ -12,11 +12,12 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
+	"io"
+	"strings"
+
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gvalid"
-	"io"
-	"strings"
 )
 
 const (
@@ -294,9 +295,10 @@ func (c *ControllerV1) ImportContacts(ctx context.Context, req *v1.ImportContact
 				continue
 			}
 
-			//if contactInfo.Active == -1 {
-			//	contactInfo.Active = req.DefaultActive
-			//}
+			// Fix: If "active" is not explicitly specified, then use "DefaultActive" as specified in the request.
+			if c.Active == 1 {
+				contactInfo.Active = req.DefaultActive
+			}
 
 			contactInfo.Status = req.Status
 			groupContacts = append(groupContacts, &contactInfo)

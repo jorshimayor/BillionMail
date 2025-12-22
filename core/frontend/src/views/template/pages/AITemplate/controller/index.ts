@@ -165,6 +165,7 @@ export async function sendChat(store: TemplateStore, e?: KeyboardEvent) {
 	} = store
 	if (isChat.value) return
 	if (!questionContent.value) return
+	if (e && (e.isComposing || e.keyCode === 229)) return
 	if (e && checkShiftEnter(e, questionContent)) return
 	const chatRecordKey = `${questionContent.value}_+_${chatRecord.value.size}`
 	chatRecord.value.set(chatRecordKey, [])

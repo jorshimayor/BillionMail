@@ -18,31 +18,20 @@
 								</from-select>
 							</n-form-item>
 							<n-form-item :label="$t('market.task.edit.displayName')" path="full_name">
-								<n-input
-									v-model:value="form.full_name"
-									:placeholder="$t('market.task.edit.displayNamePlaceholder')">
+								<n-input v-model:value="form.full_name" :placeholder="$t('market.task.edit.displayNamePlaceholder')">
 								</n-input>
 							</n-form-item>
 							<n-form-item :label="$t('market.task.edit.subject')" path="subject">
-								<n-input
-									v-model:value="form.subject"
-									:placeholder="$t('market.task.edit.subjectPlaceholder')">
+								<n-input v-model:value="form.subject" :placeholder="$t('market.task.edit.subjectPlaceholder')">
 								</n-input>
 							</n-form-item>
 							<n-form-item :label="$t('market.task.edit.recipients')" type="group_ids">
 								<div class="flex-1">
 									<div class="flex items-center">
-										<group-select
-											v-model:value="form.group_id"
-											v-model:label="groupName"
-											:disabled="isEdit">
+										<group-select v-model:value="form.group_id" v-model:label="groupName" :disabled="isEdit">
 										</group-select>
 									</div>
-									<i18n-t
-										class="mt-8px"
-										tag="div"
-										scope="global"
-										keypath="market.task.edit.recipientsCount">
+									<i18n-t class="mt-8px" tag="div" scope="global" keypath="market.task.edit.recipientsCount">
 										<template #count>
 											<b>{{ recipientsCount }}</b>
 										</template>
@@ -51,27 +40,19 @@
 							</n-form-item>
 							<n-grid :cols="24" :x-gap="24">
 								<n-form-item-gi :span="6" :label="$t('market.task.edit.tagLogic')" path="tag_logic">
-									<n-select
-										v-model:value="form.tag_logic"
-										:options="logicOptions"
-										:disabled="isEdit"
+									<n-select v-model:value="form.tag_logic" :options="logicOptions" :disabled="isEdit"
 										@update:value="() => getRecipientCount()">
 									</n-select>
 								</n-form-item-gi>
 								<n-form-item-gi :span="18" :label="$t('market.task.edit.tags')" path="tag_ids">
-									<tag-select
-										v-model:value="form.tag_ids"
-										:group-id="form.group_id"
-										:disabled="isEdit"
+									<tag-select v-model:value="form.tag_ids" :group-id="form.group_id" :disabled="isEdit"
 										@update:value="() => getRecipientCount()">
 									</tag-select>
 								</n-form-item-gi>
 							</n-grid>
 							<n-form-item :label="$t('market.task.edit.template')" path="template_id">
 								<div class="flex-1">
-									<template-select
-										v-model:value="form.template_id"
-										v-model:content="templateContent"
+									<template-select v-model:value="form.template_id" v-model:content="templateContent"
 										@list-ready="findTemplateId">
 									</template-select>
 								</div>
@@ -83,18 +64,26 @@
 								<n-switch v-model:value="form.is_record" :checked-value="1" :unchecked-value="0">
 								</n-switch>
 							</n-form-item>
-							<n-form-item :label="t('market.task.edit.ipWarmup')">
-								<n-switch v-model:value="form.warmup" :checked-value="1" :unchecked-value="0">
-								</n-switch>
-								<span class="ml-12px text-desc">{{ t('market.task.edit.ipWarmupTip') }}</span>
-							</n-form-item>
-							<n-form-item :label="$t('market.task.edit.unsubscribeLink')">
-								<n-switch v-model:value="form.unsubscribe" :checked-value="1" :unchecked-value="0">
-								</n-switch>
-								<!-- <n-button text type="primary" class="ml-16px" @click="handleViewCase">
-							{{ t('market.task.edit.viewCase') }}
-						</n-button> -->
-							</n-form-item>
+							<n-grid :cols="24" :x-gap="16">
+								<n-form-item-gi :span="12" :label="t('market.task.edit.ipWarmup')">
+									<n-switch v-model:value="form.warmup" :checked-value="1" :unchecked-value="0">
+									</n-switch>
+									<span class="ml-12px text-desc">{{ t('market.task.edit.ipWarmupTip') }}</span>
+								</n-form-item-gi>
+								<n-form-item-gi :span="12" :label="$t('market.task.edit.unsubscribeLink')">
+									<n-switch v-model:value="form.unsubscribe" :checked-value="1" :unchecked-value="0">
+									</n-switch>
+								</n-form-item-gi>
+								<n-form-item-gi :span="12" :label="t('market.task.edit.trackClick')" path="track_click">
+									<n-switch v-model:value="form.track_click" :checked-value="1" :unchecked-value="0">
+									</n-switch>
+								</n-form-item-gi>
+								<n-form-item-gi :span="12" :label="t('market.task.edit.trackOpen')" path="track_open">
+									<n-switch v-model:value="form.track_open" :checked-value="1" :unchecked-value="0">
+									</n-switch>
+								</n-form-item-gi>
+							</n-grid>
+
 							<n-form-item :label="$t('market.task.edit.threads')" :show-feedback="false">
 								<n-radio-group v-model:value="threadsType" @update:value="handleUpdateThread">
 									<n-radio :value="0">
@@ -105,42 +94,28 @@
 									</n-radio>
 								</n-radio-group>
 								<div v-show="threadsType === 1" class="w-60px">
-									<n-input-number
-										v-model:value="form.threads"
-										:min="1"
-										:max="100"
-										:show-button="false">
+									<n-input-number v-model:value="form.threads" :min="1" :max="100" :show-button="false">
 									</n-input-number>
 								</div>
 							</n-form-item>
 						</n-card>
 						<n-card>
 							<n-form-item :label="t('market.task.edit.sendTime')" path="start_time">
-								<n-radio-group
-									v-model:value="sendTimeType"
-									class="flex items-center"
-									@update:value="handleUpdateSend">
+								<n-radio-group v-model:value="sendTimeType" class="flex items-center" @update:value="handleUpdateSend">
 									<n-radio :value="0">{{ t('market.task.edit.sendTimeNow') }}</n-radio>
 									<n-radio class="items-center" :value="1"> </n-radio>
-									<n-date-picker
-										v-model:value="form.start_time"
-										class="ml-8px"
-										type="datetime"
+									<n-date-picker v-model:value="form.start_time" class="ml-8px" type="datetime"
 										:disabled="sendTimeType === 0">
 									</n-date-picker>
 								</n-radio-group>
 							</n-form-item>
 							<n-form-item :label="$t('market.task.edit.remark')">
-								<n-input
-									v-model:value="form.remark"
-									:placeholder="$t('market.task.edit.remarkPlaceholder')">
+								<n-input v-model:value="form.remark" :placeholder="$t('market.task.edit.remarkPlaceholder')">
 								</n-input>
 							</n-form-item>
 							<n-form-item :label="$t('market.task.edit.testEmail')" :show-feedback="false">
 								<div class="flex-1 mr-10px">
-									<n-input
-										v-model:value="testEmail"
-										:placeholder="$t('market.task.edit.testEmailPlaceholder')">
+									<n-input v-model:value="testEmail" :placeholder="$t('market.task.edit.testEmailPlaceholder')">
 									</n-input>
 								</div>
 								<n-button @click="handleSendTest">
@@ -151,9 +126,7 @@
 					</div>
 				</bt-form>
 				<div class="task-preview">
-					<n-card
-						class="h-full"
-						:content-style="{ display: 'flex', flexDirection: 'column', height: '100%' }">
+					<n-card class="h-full" :content-style="{ display: 'flex', flexDirection: 'column', height: '100%' }">
 						<div class="preview-header">
 							<div class="preview-header-item">
 								<div class="preview-label">{{ t('market.task.edit.from') }}:</div>
@@ -195,6 +168,7 @@ import { FormRules } from 'naive-ui'
 import { useGlobalStore } from '@/store'
 import { useElementBounding } from '@vueuse/core'
 import { confirm, isObject, Message } from '@/utils'
+import { getContactTagCount } from '@/api/modules/contacts/group'
 import { addTask, getTaskDetails, sendTestEmail, updateTask } from '@/api/modules/market/task'
 import { Task } from './interface'
 import { Template } from '../template/interface'
@@ -203,7 +177,6 @@ import FromSelect from './components/FromSelect.vue'
 import GroupSelect from './components/GroupSelect.vue'
 import TagSelect from './components/TagSelect.vue'
 import TemplateSelect from './components/TemplateSelect.vue'
-import { getContactTagCount } from '@/api/modules/contacts/group'
 
 const { t } = useI18n()
 
@@ -237,6 +210,8 @@ const form = reactive({
 	remark: '',
 	tag_ids: [] as number[],
 	tag_logic: 'OR',
+	track_click: 1,
+	track_open: 1,
 })
 
 const logicOptions = [
@@ -247,6 +222,10 @@ const logicOptions = [
 	{
 		label: 'AND',
 		value: 'AND',
+	},
+	{
+		label: 'NOT',
+		value: 'NOT',
 	},
 ]
 
@@ -395,8 +374,8 @@ const getParams = () => {
 		startTime = Date.now()
 	}
 	return {
-		track_open: 1,
-		track_click: 1,
+		track_open: form.track_open,
+		track_click: form.track_click,
 		addresser: form.addresser || '',
 		full_name: form.full_name,
 		subject: form.subject,
@@ -465,6 +444,8 @@ const initForm = async () => {
 		threadsType.value = res.threads === 0 ? 0 : 1
 		form.remark = res.remark
 		form.tag_logic = res.tag_logic
+		form.track_open = res.track_open
+		form.track_click = res.track_click
 		nextTick(() => {
 			form.tag_ids = res.tag_ids
 		})

@@ -2,6 +2,7 @@ package v1
 
 import (
 	"billionmail-core/utility/types/api_v1"
+
 	"github.com/gogf/gf/v2/frame/g"
 )
 
@@ -10,6 +11,7 @@ type ApiTemplates struct {
 	ApiKey            string `json:"api_key" dc:"api key"`
 	ApiName           string `json:"api_name" dc:"api name"`
 	TemplateId        int    `json:"template_id" dc:"template id"`
+	GroupId           int    `json:"group_id" dc:"group id"`
 	Subject           string `json:"subject" dc:"subject"`
 	Addresser         string `json:"addresser" dc:"addresser"`
 	FullName          string `json:"full_name" dc:"full name"`
@@ -45,6 +47,7 @@ type ApiTemplatesListReq struct {
 
 type ApiTemplatesInfo struct {
 	ApiTemplates
+	GroupId      int     `json:"group_id" dc:"group id"`
 	SendCount    int     `json:"send_count" dc:"send count"`
 	SuccessCount int     `json:"success_count" dc:"success count"`
 	FailCount    int     `json:"fail_count" dc:"fail count"`
@@ -92,6 +95,7 @@ type ApiTemplatesCreateReq struct {
 	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
 	ApiName       string `json:"api_name" dc:"api name"`
 	TemplateId    int    `json:"template_id" dc:"template id"`
+	GroupId       int    `json:"group_id" dc:"Associated group ID"`
 	Subject       string `json:"subject" dc:"subject"`
 	Addresser     string `json:"addresser" dc:"addresser"`
 	FullName      string `json:"full_name" dc:"full name"`
@@ -100,6 +104,8 @@ type ApiTemplatesCreateReq struct {
 	ExpireTime    int    `json:"expire_time" dc:"expire time"` // 0 is a permanently valid unit of seconds
 	//IpWhitelistEnabled int      `json:"ip_whitelist_enabled" dc:"ip whitelist enabled"`
 	IpWhitelist []string `json:"ip_whitelist" dc:"ip whitelist"`
+	TrackOpen   int      `json:"track_open" v:"in:0,1" dc:"track open" default:"1"`
+	TrackClick  int      `json:"track_click" v:"in:0,1" dc:"track click" default:"1"`
 }
 
 type ApiTemplatesCreateRes struct {
@@ -112,6 +118,7 @@ type ApiTemplatesUpdateReq struct {
 	ID            int    `json:"id" dc:"id"`
 	ApiName       string `json:"api_name" dc:"api name"`
 	TemplateId    int    `json:"template_id" dc:"template id"`
+	GroupId       int    `json:"group_id" dc:"Associated group ID"`
 	Subject       string `json:"subject" dc:"subject"`
 	Addresser     string `json:"addresser" dc:"addresser"`
 	FullName      string `json:"full_name" dc:"full name"`
@@ -140,11 +147,12 @@ type ApiTemplatesDeleteRes struct {
 }
 
 type ApiMailSendReq struct {
-	g.Meta    `path:"/batch_mail/api/send" method:"post" tags:"ApiMail" summary:"call api send mail"`
-	ApiKey    string            `json:"x-api-key" dc:"API Key" in:"header"`
-	Addresser string            `json:"addresser" dc:"addresser"`
-	Recipient string            `json:"recipient" dc:"recipient"`
-	Attribs   map[string]string `json:"attribs" dc:"Custom properties"`
+	g.Meta        `path:"/batch_mail/api/send" method:"post" tags:"ApiMail" summary:"call api send mail"`
+	Authorization string            `json:"authorization" dc:"Authorization" in:"header"`
+	ApiKey        string            `json:"x-api-key" dc:"API Key" in:"header"`
+	Addresser     string            `json:"addresser" dc:"addresser"`
+	Recipient     string            `json:"recipient" dc:"recipient"`
+	Attribs       map[string]string `json:"attribs" dc:"Custom properties"`
 }
 
 type ApiMailSendRes struct {
@@ -152,11 +160,12 @@ type ApiMailSendRes struct {
 }
 
 type ApiMailBatchSendReq struct {
-	g.Meta     `path:"/batch_mail/api/batch_send" method:"post" tags:"ApiMail" summary:"call api batch send mail"`
-	ApiKey     string            `json:"x-api-key" dc:"API Key" in:"header"`
-	Addresser  string            `json:"addresser" dc:"addresser"`
-	Recipients []string          `json:"recipients" dc:"recipients"`
-	Attribs    map[string]string `json:"attribs" dc:"Custom properties"`
+	g.Meta        `path:"/batch_mail/api/batch_send" method:"post" tags:"ApiMail" summary:"call api batch send mail"`
+	Authorization string            `json:"authorization" dc:"Authorization" in:"header"`
+	ApiKey        string            `json:"x-api-key" dc:"API Key" in:"header"`
+	Addresser     string            `json:"addresser" dc:"addresser"`
+	Recipients    []string          `json:"recipients" dc:"recipients"`
+	Attribs       map[string]string `json:"attribs" dc:"Custom properties"`
 }
 
 type ApiMailBatchSendRes struct {

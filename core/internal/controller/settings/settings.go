@@ -164,6 +164,11 @@ func convertEnvToConfig(envMap map[string]string) *v1.SystemConfig {
 	// IP whitelist  IP_WHITELIST_ENABLE
 	config.IPWhitelistEnabled = envMap["IP_WHITELIST_ENABLE"] == "true"
 
+	// Data retention days
+	if retentionDays := envMap["RETENTION_DAYS"]; retentionDays != "" {
+		config.RetentionDays = parseInt(retentionDays, 7)
+	}
+
 	return config
 }
 
@@ -227,6 +232,11 @@ func validateConfigValue(key, value string) error {
 		// fail2ban: only allowed y/n or 1/0
 		if value != "y" && value != "n" && value != "1" && value != "0" {
 			return fmt.Errorf("fail2ban value can only be y/n or 1/0")
+		}
+	case "RETENTION_DAYS", "retention_days":
+		// retention_days: must be a number
+		if _, err := strconv.Atoi(value); err != nil {
+			return fmt.Errorf("retention_days must be a number")
 		}
 	}
 

@@ -460,6 +460,11 @@ func ensureMaildirAndQuotaFile(ctx context.Context, m *v1.Mailbox) error {
 		return err
 	}
 
+	if err := public.ChownDovecot(root); err != nil {
+		g.Log().Warning(ctx, "chown userDir failed", root, err)
+
+	}
+
 	fp := filepath.Join(root, "maildirsize")
 
 	quotaVal := int64(0)

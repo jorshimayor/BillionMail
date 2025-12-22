@@ -234,62 +234,62 @@ func (c *ControllerV1) RefreshToken(ctx context.Context, req *v1.RefreshTokenReq
 	return
 }
 
-// CurrentUser retrieves the current logged-in user information
-func (c *ControllerV1) CurrentUser(ctx context.Context, req *v1.CurrentUserReq) (res *v1.CurrentUserRes, err error) {
-	res = &v1.CurrentUserRes{}
-
-	// Get account ID from context
-	accountId := service.GetCurrentAccountId(ctx)
-	if accountId == 0 {
-		err = gerror.New("Unauthorized")
-		return
-	}
-
-	// Get account details
-	account, err := service.Account().GetById(ctx, accountId)
-	if err != nil {
-		err = gerror.New("Failed to get account details")
-		return
-	}
-
-	// Get account roles
-	roles, err := service.Account().GetAccountRoles(ctx, accountId)
-	if err != nil {
-		err = gerror.New("Failed to get account roles")
-		return
-	}
-
-	// Get account permissions
-	permissions, err := service.Account().GetAccountPermissions(ctx, accountId)
-	if err != nil {
-		err = gerror.New("Failed to get account permissions")
-		return
-	}
-
-	// Prepare response
-	res.Success = true
-	res.Code = 0
-	res.Msg = "Retrieved successfully"
-
-	// Set account information
-	res.Data.Account.Id = account.AccountId
-	res.Data.Account.Username = account.Username
-	res.Data.Account.Email = account.Email
-	res.Data.Account.Status = account.Status
-	res.Data.Account.Lang = account.Language
-
-	// Set roles
-	res.Data.Roles = make([]string, 0, len(roles))
-	for _, role := range roles {
-		res.Data.Roles = append(res.Data.Roles, role.RoleName)
-	}
-
-	// Set permissions
-	res.Data.Permissions = make([]string, 0, len(permissions))
-	for _, perm := range permissions {
-		permStr := perm.Module + ":" + perm.Action + ":" + perm.Resource
-		res.Data.Permissions = append(res.Data.Permissions, permStr)
-	}
-
-	return
-}
+//// CurrentUser retrieves the current logged-in user information
+//func (c *ControllerV1) CurrentUser(ctx context.Context, req *v1.CurrentUserReq) (res *v1.CurrentUserRes, err error) {
+//	res = &v1.CurrentUserRes{}
+//
+//	// Get account ID from context
+//	accountId := service.GetCurrentAccountId(ctx)
+//	if accountId == 0 {
+//		err = gerror.New("Unauthorized")
+//		return
+//	}
+//
+//	// Get account details
+//	account, err := service.Account().GetById(ctx, accountId)
+//	if err != nil {
+//		err = gerror.New("Failed to get account details")
+//		return
+//	}
+//
+//	// Get account roles
+//	roles, err := service.Account().GetAccountRoles(ctx, accountId)
+//	if err != nil {
+//		err = gerror.New("Failed to get account roles")
+//		return
+//	}
+//
+//	// Get account permissions
+//	permissions, err := service.Account().GetAccountPermissions(ctx, accountId)
+//	if err != nil {
+//		err = gerror.New("Failed to get account permissions")
+//		return
+//	}
+//
+//	// Prepare response
+//	res.Success = true
+//	res.Code = 0
+//	res.Msg = "Retrieved successfully"
+//
+//	// Set account information
+//	res.Data.Account.Id = account.AccountId
+//	res.Data.Account.Username = account.Username
+//	res.Data.Account.Email = account.Email
+//	res.Data.Account.Status = account.Status
+//	res.Data.Account.Lang = account.Language
+//
+//	// Set roles
+//	res.Data.Roles = make([]string, 0, len(roles))
+//	for _, role := range roles {
+//		res.Data.Roles = append(res.Data.Roles, role.RoleName)
+//	}
+//
+//	// Set permissions
+//	res.Data.Permissions = make([]string, 0, len(permissions))
+//	for _, perm := range permissions {
+//		permStr := perm.Module + ":" + perm.Action + ":" + perm.Resource
+//		res.Data.Permissions = append(res.Data.Permissions, permStr)
+//	}
+//
+//	return
+//}

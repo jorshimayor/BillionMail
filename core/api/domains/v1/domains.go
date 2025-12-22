@@ -2,6 +2,7 @@ package v1
 
 import (
 	"billionmail-core/utility/types/api_v1"
+
 	"github.com/gogf/gf/v2/frame/g"
 )
 
@@ -14,12 +15,13 @@ type DNSRecord struct {
 }
 
 type DNSRecords struct {
-	SPF   DNSRecord `json:"spf"          dc:"SPF record"`
-	DKIM  DNSRecord `json:"dkim"         dc:"DKIM record"`
-	DMARC DNSRecord `json:"dmarc"         dc:"DMARC record"`
-	MX    DNSRecord `json:"mx"   dc:"MX record"`
-	A     DNSRecord `json:"a"    dc:"A record"`
-	PTR   DNSRecord `json:"ptr"        dc:"PTR record"`
+	SPF       DNSRecord `json:"spf"          dc:"SPF record"`
+	DKIM      DNSRecord `json:"dkim"         dc:"DKIM record"`
+	DKIMShort DNSRecord `json:"dkim_short"   dc:"DKIM short record"`
+	DMARC     DNSRecord `json:"dmarc"        dc:"DMARC record"`
+	MX        DNSRecord `json:"mx"           dc:"MX record"`
+	A         DNSRecord `json:"a"            dc:"A record"`
+	PTR       DNSRecord `json:"ptr"          dc:"PTR record"`
 }
 
 type CertInfo struct {
@@ -51,6 +53,27 @@ type Domain struct {
 	HasBrandInfo   int            `json:"hasbrandinfo"        dc:"Brand information : 1-exist, 0-not exist"`
 	MultiIPDomains *MultiIPDomain `json:"multi_ip_domains" dc:"Multiple IP domains"`
 	CurrentUsage   int64          `json:"current_usage" dc:"Domain Current usage"`
+
+	BlackCheckResult *BlacklistCheckResult `json:"black_check_result" dc:"Last blacklist check result"`
+	BlackCheckLog    string                `json:"black_check_log" dc:"Path to blacklist check log file"`
+}
+
+type BlacklistCheckResult struct {
+	Time        int64             `json:"time"`
+	Results     string            `json:"results"`
+	IP          string            `json:"ip"`
+	Tested      int               `json:"tested"`
+	Passed      int               `json:"passed"`
+	Invalid     int               `json:"invalid"`
+	Blacklisted int               `json:"blacklisted"`
+	BlackList   []BlacklistDetail `json:"black_list"`
+}
+
+// BlacklistDetail
+type BlacklistDetail struct {
+	Blacklist string `json:"blacklist"`
+	Response  string `json:"response"`
+	Time      int64  `json:"time"`
 }
 
 type AddDomainReq struct {

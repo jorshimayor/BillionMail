@@ -404,8 +404,8 @@ onMounted(() => {
 
 					.ask-content,
 					.answer-content {
-						display: grid;
-						grid-template-rows: 30px 1fr;
+						display: flex;
+						flex-direction: column;
 						padding: 16px;
 						border-radius: 4px;
 						gap: 10px;

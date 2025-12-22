@@ -7,12 +7,13 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"github.com/gogf/gf/crypto/gmd5"
-	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/frame/g"
 	"math/rand"
 	"strings"
 	"time"
+
+	"github.com/gogf/gf/crypto/gmd5"
+	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/frame/g"
 )
 
 func CreateGroup(ctx context.Context, name, description string, double_optin int) (int, error) {
@@ -541,4 +542,44 @@ func BatchCreateContactsWithOverwrite(ctx context.Context, contacts []*entity.Co
 func GfMd5Short() string {
 	str := fmt.Sprintf("%s_%d_%d", time.Now().UnixNano(), rand.Intn(100000))
 	return gmd5.MustEncryptString(str)[:12]
+}
+
+// AddContactToGroup adds a contact to a specified group if it doesn't already exist.
+func AddContactToGroup(ctx context.Context, email string, groupId int) (*entity.Contact, error) {
+	// Check if the contact already exists in the group
+	var existingContact entity.Contact
+	err := g.DB().Model("bm_contacts").Ctx(ctx).Where("email", email).Where("group_id", groupId).Scan(&existingContact)
+	if err != nil && err != sql.ErrNoRows {
+		g.Log().Errorf(ctx, "Failed to check for existing contact %s in group %d: %v", email, groupId, err)
+		return nil, err
+	}
+
+	// If contact already exists, return it
+	if existingContact.Id > 0 {
+		return &existingContact, nil
+	}
+
+	// If contact does not exist, create a new one
+	newContact := &entity.Contact{
+		Email:      email,
+		GroupId:    groupId,
+		Active:     1,
+		Status:     1,
+		CreateTime: int(time.Now().Unix()),
+	}
+
+	result, err := g.DB().Model("bm_contacts").Ctx(ctx).Data(newContact).FieldsEx("id").Insert()
+	if err != nil {
+		g.Log().Errorf(ctx, "Failed to insert new contact %s into group %d: %v", email, groupId, err)
+		return nil, err
+	}
+
+	newId, err := result.LastInsertId()
+	if err != nil {
+		g.Log().Errorf(ctx, "Failed to get last insert ID for contact %s: %v", email, err)
+		return nil, err
+	}
+	newContact.Id = int(newId)
+
+	return newContact, nil
 }

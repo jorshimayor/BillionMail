@@ -16,8 +16,9 @@ var (
 )
 
 type GetConfigFileReq struct {
-	g.Meta      `path:"/services/get_config" method:"post" summary:"get config file"`
-	ServiceType string `json:"service_type" v:"required" desc:"service type"`
+	g.Meta        `path:"/services/get_config" method:"post" summary:"get config file"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	ServiceType   string `json:"service_type" v:"required" desc:"service type"`
 }
 
 type GetConfigFileRes struct {
@@ -33,9 +34,10 @@ type GetConfigFileRes struct {
 }
 
 type SaveConfigFileReq struct {
-	g.Meta      `path:"/services/save_config" method:"post" summary:"save config file"`
-	ServiceType string `json:"service_type" v:"required" desc:"service type"`
-	Content     string `json:"content" v:"required" desc:"file content"`
+	g.Meta        `path:"/services/save_config" method:"post" summary:"save config file"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	ServiceType   string `json:"service_type" v:"required" desc:"service type"`
+	Content       string `json:"content" v:"required" desc:"file content"`
 }
 
 type SaveConfigFileRes struct {

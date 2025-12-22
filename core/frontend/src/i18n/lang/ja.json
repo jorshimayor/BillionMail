@@ -310,6 +310,10 @@
 				"viewCase": "ケースを見る",
 				"tags": "タグ",
 				"tagLogic": "タグロジック",
+				"ipWarmup": "IPウォームアップシステムを関連付け",
+				"ipWarmupTip": "有効にすると送信速度が制限されます",
+				"trackClick": "クリック追跡",
+				"trackOpen": "開封追跡",
 				"preview": {
 					"empty": "プレビューするメールテンプレートを選択してください"
 				},
@@ -841,6 +845,18 @@
 				"title": "ステップ4: PTR レコードを追加",
 				"description1": "（任意）PTR レコードは逆引きDNSに使用されます",
 				"description2": "IP プロバイダーに連絡して PTR レコードを作成してください"
+			},
+			"dkim": {
+				"formatLabel": "DKIM レコードフォーマット：",
+				"keySize": {
+					"option2048": "2048 ビット RSA キー",
+					"option1024": "1024 ビット RSA キー"
+				},
+				"tips": {
+					"line1": "DKIM は 2048 ビットおよび 1024 ビットの RSA キーに対応します。",
+					"line2": "より高い安全性のため、2048 ビットのキーを推奨します。",
+					"line3": "DNS プロバイダーの制約に応じて選択してください。"
+				}
 			}
 		},
 		"ssl": {
@@ -885,6 +901,24 @@
 				"getCommandFirst": "まずコマンドを取得してください"
 			}
 		},
+		"notSpam": {
+			"checkNow": "今すぐチェック",
+			"logs": "ログ"
+		},
+		"blacklistDetection": {
+			"title": "ブラックリストチェック",
+			"checking": "{results} は {ip} に解決され、既知のブラックリスト {tested} 件に対してチェックしています...",
+			"listed": "リスト件数: {count}",
+			"success": "aaPanel が認識するブラックリストには IP は存在しません",
+			"columns": {
+				"blacklist": "ブラックリスト",
+				"responseIp": "レスポンス IP",
+				"checkTime": "チェック時間"
+			}
+		},
+		"checkLogs": {
+			"title": "チェックログ"
+		},
 		"api": {
 			"loading": {
 				"creating": "ドメインを作成中です、しばらくお待ちください...",
@@ -895,7 +929,8 @@
 				"applyingCert": "証明書を申請中です、しばらくお待ちください...",
 				"settingDefault": "デフォルトドメインを設定中です、しばらくお待ちください...",
 				"settingBrandInfo": "ドメインブランド情報を設定中です、しばらくお待ちください...",
-				"testingConnection": "接続をテスト中です、しばらくお待ちください..."
+				"testingConnection": "接続をテスト中です、しばらくお待ちください...",
+				"detecting": "検出中です、しばらくお待ちください..."
 			}
 		},
 		"edit": {
@@ -1308,6 +1343,37 @@
 					"enableContent": "API設定を有効にしますか？",
 					"disableContent": "API設定を無効にしますか？"
 				}
+			},
+			"notifySettings": {
+				"title": "通知設定",
+				"blacklist": {
+					"title": "IP/ドメインがブラックリストに登録された場合に通知する",
+					"alarmSet": "アラーム設定",
+					"alarmSettings": {
+						"title": "アラーム設定",
+						"name": "名称",
+						"senderEmail": "送信者メールアドレス",
+						"smtpPassword": "SMTPパスワード",
+						"smtpServer": "SMTPサーバー",
+						"port": "ポート",
+						"recipientEmail": "受信者メールアドレス"
+					},
+					"autoCheck": {
+						"title": "ブラックリストの自動検出",
+						"confirm": {
+							"enableTitle": "ブラックリスト自動検出を有効にする",
+							"disableTitle": "ブラックリスト自動検出を無効にする",
+							"enableContent": "ブラックリスト自動検出サービスを開始しますか？",
+							"disableContent": "ブラックリスト自動検出サービスを停止しますか？"
+						}
+					}
+				}
+			},
+			"retention": {
+				"title": "メール保持期間",
+				"currentDays": "{days}日",
+				"trashHint": "ゴミ箱メールの保持期間",
+				"day": "日"
 			}
 		},
 		"api": {
@@ -1340,6 +1406,73 @@
 			"model": "Model",
 			"byDefault": "By default, all models are retrieved from /models",
 			"addModel": "Add Model"
+		}
+	},
+	"api": {
+		"title": "Send API",
+		"timeRange": "Time Range: ",
+		"status": "Status: ",
+		"search": "Search: ",
+		"searchPlaceholder": "Please enter API name",
+		"refreshData": "Refresh Data",
+		"createNew": "Create API",
+		"statusOptions": {
+			"all": "All",
+			"active": "Active",
+			"inactive": "Inactive"
+		},
+		"columns": {
+			"apiName": "API Name",
+			"apiKey": "API Key",
+			"sendCount": "Send Count",
+			"openRate": "Open Rate",
+			"clickRate": "Click Rate",
+			"bounceRate": "Bounce Rate",
+			"status": "Status"
+		},
+		"statusLabels": {
+			"active": "Active",
+			"inactive": "Inactive"
+		},
+		"confirmDelete": {
+			"title": "Delete API [{apiName}]",
+			"content": "Are you sure you want to delete this API?"
+		},
+		"overview": {
+			"totalSend": "Total Sent",
+			"avgOpenRate": "Avg Open Rate",
+			"avgClickRate": "Avg Click Rate",
+			"avgBounceRate": "Avg Bounce Rate"
+		},
+		"form": {
+			"apiName": "API Name",
+			"status": "Status",
+			"ipWhitelist": "IP Whitelist",
+			"apiNamePlaceholder": "Please enter API name",
+			"ipWhitelistPlaceholder": "Multiple IPs separated by commas, empty means no restriction",
+			"advancedFeatures": "高度な機能",
+			"validation": {
+				"apiNameRequired": "Please enter API name",
+				"addresserRequired": "Please select sender",
+				"templateRequired": "Please select template"
+			},
+			"title": {
+				"edit": "Edit API",
+				"add": "Add API"
+			},
+			"group": {
+				"label": "受信者グループ",
+				"tips": {
+					"choose": "グループを選択：このAPIで追加された新規連絡先は、選択したグループに自動的に追加されます。",
+					"autoCreate": "グループを選択しない：このAPI専用の新しい独立した連絡先グループが自動作成され、すべての新規連絡先が保存されます。"
+				}
+			}
+		},
+		"loading": {
+			"creating": "Creating, please wait...",
+			"updating": "Updating, please wait...",
+			"deleting": "Deleting, please wait...",
+			"testing": "Testing, please wait..."
 		}
 	},
 	"logs": {

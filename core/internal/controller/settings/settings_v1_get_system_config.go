@@ -5,8 +5,11 @@ import (
 	"billionmail-core/internal/service/domains"
 	"billionmail-core/internal/service/public"
 	"context"
+	"encoding/json"
+
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gfile"
 )
 
 func (c *ControllerV1) GetSystemConfig(ctx context.Context, req *v1.GetSystemConfigReq) (res *v1.GetSystemConfigRes, err error) {
@@ -64,6 +67,18 @@ func (c *ControllerV1) GetSystemConfig(ctx context.Context, req *v1.GetSystemCon
 	config.APIDocSwagger.APIDocURL = BaseURL + "/api.json"
 	config.APIDocSwagger.SwaggerURL = BaseURL + "/swagger"
 
+	// Load blacklist configuration
+	blacklistConfig, err := loadBlacklistConfig(ctx)
+	if err == nil {
+		config.BlacklistConfig = *blacklistConfig
+	} else {
+		config.BlacklistConfig = v1.BlacklistConfig{
+			AutoScanEnabled: true,
+			AlertEnabled:    false,
+			AlertSettings:   &v1.BlacklistAlertSettings{},
+		}
+	}
+
 	res.Data = config
 
 	res.SetSuccess(public.LangCtx(ctx, "Successfully retrieved system configuration"))
@@ -71,7 +86,6 @@ func (c *ControllerV1) GetSystemConfig(ctx context.Context, req *v1.GetSystemCon
 }
 
 func GetIPWhitelist() ([]g.Map, error) {
-
 	result, err := g.DB().Model("bm_console_ip_whitelist").
 		Fields("id, ip").
 		All()
@@ -93,4 +107,51 @@ func GetIPWhitelist() ([]g.Map, error) {
 	}
 
 	return whitelist, nil
+}
+
+func loadBlacklistConfig(ctx context.Context) (*v1.BlacklistConfig, error) {
+	config := &v1.BlacklistConfig{
+		AutoScanEnabled: true,
+		AlertEnabled:    false,
+		AlertSettings:   &v1.BlacklistAlertSettings{},
+	}
+
+	var autoScanEnabled bool
+	err := public.OptionsMgrInstance.GetOption(ctx, "blacklist_auto_scan_enabled", &autoScanEnabled)
+	if err == nil {
+		config.AutoScanEnabled = autoScanEnabled
+	}
+
+	var alertEnabled bool
+	err = public.OptionsMgrInstance.GetOption(ctx, "blacklist_alert_enabled", &alertEnabled)
+	if err == nil {
+		config.AlertEnabled = alertEnabled
+	}
+
+	alertSettings, err := loadBlacklistAlertSettings()
+	if err == nil && alertSettings != nil {
+		config.AlertSettings = alertSettings
+	}
+
+	return config, nil
+}
+
+func loadBlacklistAlertSettings() (*v1.BlacklistAlertSettings, error) {
+	alertSettingsFile := public.AbsPath("../core/data/blacklist_alert_settings.json")
+	if !gfile.Exists(alertSettingsFile) {
+		return nil, nil
+	}
+
+	content := gfile.GetContents(alertSettingsFile)
+	if content == "" {
+		return nil, nil
+	}
+
+	var settings v1.BlacklistAlertSettings
+	err := json.Unmarshal([]byte(content), &settings)
+	if err != nil {
+		return nil, gerror.Wrap(err, "Failed to parse alert settings")
+	}
+
+	return &settings, nil
 }

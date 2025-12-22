@@ -7,9 +7,10 @@ import (
 
 // UnsubscribeReq defines the unsubscribe request parameters
 type UnsubscribeReq struct {
-	g.Meta  `path:"/unsubscribe" method:"post" tags:"Unsubscribe" summary:"Unsubscribe from mailing lists"`
-	Jwt     string `json:"jwt" v:"required" dc:"JWT token containing unsubscribe information"`
-	GroupId []int  `json:"group_id" dc:"Group IDs to unsubscribe from (optional, if empty will unsubscribe from all groups)"`
+	g.Meta        `path:"/unsubscribe" method:"post" tags:"Unsubscribe" summary:"Unsubscribe from mailing lists"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Jwt           string `json:"jwt" v:"required" dc:"JWT token containing unsubscribe information"`
+	GroupId       []int  `json:"group_id" dc:"Group IDs to unsubscribe from (optional, if empty will unsubscribe from all groups)"`
 }
 
 // UnsubscribeRes defines the unsubscribe response
@@ -18,8 +19,9 @@ type UnsubscribeRes struct {
 }
 
 type GetUserGroupsReq struct {
-	g.Meta `path:"/unsubscribe/user_group" method:"post" tags:"Unsubscribe" summary:"get user groups"`
-	Email  string `json:"email" dc:"user email"`
+	g.Meta        `path:"/unsubscribe/user_group" method:"post" tags:"Unsubscribe" summary:"get user groups"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Email         string `json:"email" dc:"user email"`
 }
 
 type GetUserGroupsRes struct {
@@ -28,8 +30,9 @@ type GetUserGroupsRes struct {
 }
 
 type UnsubscribeNewReq struct {
-	g.Meta `path:"/unsubscribe_new" method:"post" tags:"Unsubscribe" summary:"New unsubscribe API - direct unsubscribe"`
-	Jwt    string `json:"jwt" v:"required" dc:"JWT token containing unsubscribe information"`
+	g.Meta        `path:"/unsubscribe_new" method:"post" tags:"Unsubscribe" summary:"New unsubscribe API - direct unsubscribe"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Jwt           string `json:"jwt" v:"required" dc:"JWT token containing unsubscribe information"`
 }
 
 type UnsubscribeNewRes struct {

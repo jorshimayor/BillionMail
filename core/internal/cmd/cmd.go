@@ -151,6 +151,8 @@ var (
 				"/subscribe_confirm.html":        {},
 				"/subscribe_form.html":           {},
 				"/subscribe_success.html":        {},
+				"/unsubscribe_success.html":      {},
+				"/subscribe_form_code.html":      {},
 			}
 
 			// Bind Server Hooks

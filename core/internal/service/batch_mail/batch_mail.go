@@ -8,15 +8,16 @@ import (
 	"billionmail-core/internal/service/warmup"
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
+	"sync/atomic"
+	"time"
+
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/gogf/gf/v2/util/gvalid"
-	"strconv"
-	"strings"
-	"sync/atomic"
-	"time"
 )
 
 var (
@@ -363,7 +364,7 @@ func GetFilteredContacts(ctx context.Context, filter ContactFilter) ([]*entity.C
 					"c.id = "+alias+".contact_id AND "+alias+".tag_id = "+g.NewVar(tagId).String(),
 				)
 			}
-		} else {
+		} else if filter.TagLogic == "OR" {
 			// OR
 			var inValues []string
 			for _, tagId := range filter.TagIds {
@@ -380,6 +381,12 @@ func GetFilteredContacts(ctx context.Context, filter ContactFilter) ([]*entity.C
 				subQuery,
 				"c.id = ct.contact_id",
 			)
+		} else if filter.TagLogic == "NOT" {
+			// NOT: contact must not have any of the selected tags
+			subQuery := g.DB().Model("bm_contact_tags").
+				Fields("DISTINCT contact_id").
+				WhereIn("tag_id", filter.TagIds)
+			model = model.WhereNotIn("c.id", subQuery)
 		}
 	}
 
@@ -631,6 +638,7 @@ func UpdateTaskJoinMailstat(ctx context.Context) {
 	var tasksToUpdate []*entity.EmailTask
 	err := g.DB().Model("email_tasks").
 		Where("task_process IN (?)", []int{1, 3}).
+		WhereOr("task_process = 2 AND stats_update_time > ?", time.Now().Unix()-36*3600).
 		WhereOr("task_process = 2 AND sends_count < recipient_count*0.99").
 		WhereOr("stats_update_time", 0).
 		Order("id DESC").

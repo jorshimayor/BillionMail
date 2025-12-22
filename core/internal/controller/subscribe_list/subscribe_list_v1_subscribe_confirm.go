@@ -6,10 +6,11 @@ import (
 	"billionmail-core/internal/service/public"
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/gogf/gf/os/gtimer"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
-	"time"
 
 	"billionmail-core/api/subscribe_list/v1"
 )
@@ -35,7 +36,7 @@ func (c *ControllerV1) SubscribeConfirm(ctx context.Context, req *v1.SubscribeCo
 	}
 
 	// 2. Find contact by email and group
-	contact, err := getContactByEmailAndGroup(req.Email, group.Id)
+	contact, err := getContactByEmailAndGroup(email, group.Id)
 	if err != nil || contact == nil {
 		g.RequestFromCtx(ctx).Response.RedirectTo("/invalid.html", 302)
 		return
@@ -43,7 +44,7 @@ func (c *ControllerV1) SubscribeConfirm(ctx context.Context, req *v1.SubscribeCo
 	hostUrl := domains.GetBaseURL()
 	if contact.Status == 1 && contact.Active == 1 {
 		// Update contact activity even when already confirmed (user interaction)
-		contact_activity.UpdateActivityByEmailAndGroup(req.Email, group.Id)
+		contact_activity.UpdateActivityByEmailAndGroup(email, group.Id)
 
 		if group.AlreadyUrl != "" {
 			g.RequestFromCtx(ctx).Response.RedirectTo(group.AlreadyUrl, 302)
@@ -54,14 +55,14 @@ func (c *ControllerV1) SubscribeConfirm(ctx context.Context, req *v1.SubscribeCo
 	}
 
 	// 3. Update contact status to confirmed (status=1, active=1)
-	err = updateContactStatus(req.Email, group.Id, 1)
+	err = updateContactStatus(email, group.Id, 1)
 	if err != nil {
 		res.SetError(gerror.New(public.LangCtx(ctx, "Failed to confirm subscription")))
 		return
 	}
 
 	// Update contact activity when user confirms subscription
-	contact_activity.UpdateActivityByEmailAndGroup(req.Email, group.Id)
+	contact_activity.UpdateActivityByEmailAndGroup(email, group.Id)
 
 	// 5. Send welcome email
 	if group.SendWelcomeEmail == 1 {

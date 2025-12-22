@@ -332,6 +332,41 @@ sender_dependent_default_transport_maps = pgsql:/etc/postfix/sql/pgsql_sender_tr
 	return
 }
 
+func EnsurePostfixConfExists(ctx context.Context) {
+
+	senderRelayMapsPrimaryPath := path.Join(postfixConfigDir, senderRelayMapsPrimaryFile)
+	saslPasswdPrimaryPath := path.Join(postfixConfigDir, saslPasswdPrimaryFile)
+	needReload := false
+
+	if !gfile.Exists(senderRelayMapsPrimaryPath) {
+		needReload = true
+		if err := gfile.PutContents(senderRelayMapsPrimaryPath, "# Created on "+time.Now().Format("2006-01-02 15:04:05")+"\n# This file maps sender domains to relay hosts\n"); err != nil {
+			g.Log().Errorf(ctx, "Failed to create %s: %v", senderRelayMapsPrimaryPath, err)
+		} else {
+			g.Log().Info(ctx, "Created sender_relay_maps_primary file in SyncRelayConfigsToPostfix")
+		}
+	}
+
+	if !gfile.Exists(saslPasswdPrimaryPath) {
+		needReload = true
+		if err := gfile.PutContents(saslPasswdPrimaryPath, "# Created on "+time.Now().Format("2006-01-02 15:04:05")+"\n# This file contains SASL authentication credentials for relay hosts\n"); err != nil {
+			g.Log().Errorf(ctx, "Failed to create %s: %v", saslPasswdPrimaryPath, err)
+		} else {
+			g.Log().Info(ctx, "Created sasl_passwd_primary file in SyncRelayConfigsToPostfix")
+		}
+	}
+
+	if needReload {
+		if err := reloadPostfixConfigs2(ctx); err != nil {
+			g.Log().Errorf(ctx, "Failed to reload Postfix configs after creating necessary files: %v", err)
+
+		} else {
+			g.Log().Info(ctx, "Successfully initialized and reloaded Postfix configs")
+		}
+	}
+
+}
+
 func reloadPostfixConfigs2(ctx context.Context) error {
 
 	dk, err := docker.NewDockerAPI()
@@ -600,8 +635,30 @@ func reloadPostfixConfigs(ctx context.Context) error {
 		return gerror.Wrap(err, "Failed to connect to Docker service")
 	}
 	defer dk.Close()
+
+	senderRelayMapsPrimaryPath := path.Join(postfixConfigDir, senderRelayMapsPrimaryFile)
+	saslPasswdPrimaryPath := path.Join(postfixConfigDir, saslPasswdPrimaryFile)
+
+	if !gfile.Exists(senderRelayMapsPrimaryPath) {
+		if err := gfile.PutContents(senderRelayMapsPrimaryPath, ""); err != nil {
+			g.Log().Errorf(ctx, "Failed to create %s: %v", senderRelayMapsPrimaryPath, err)
+		} else {
+			g.Log().Infof(ctx, "Created empty sender_relay_maps_primary file")
+		}
+	}
+
+	if !gfile.Exists(saslPasswdPrimaryPath) {
+		if err := gfile.PutContents(saslPasswdPrimaryPath, ""); err != nil {
+			g.Log().Errorf(ctx, "Failed to create %s: %v", saslPasswdPrimaryPath, err)
+		} else {
+			g.Log().Infof(ctx, "Created empty sasl_passwd_primary file")
+		}
+	}
+
 	// List of commands to run
 	cmdsToRun := [][]string{
+		{"postmap", "/etc/postfix/conf/sender_relay_maps_primary"},
+		{"postmap", "/etc/postfix/conf/sasl_passwd_primary"},
 		{"postmap", "/etc/postfix/conf/sasl_passwd"},
 		{"postfix", "reload"},
 	}

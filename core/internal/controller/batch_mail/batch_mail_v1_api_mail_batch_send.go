@@ -1,13 +1,15 @@
 package batch_mail
 
 import (
+	"billionmail-core/internal/service/contact"
 	"billionmail-core/internal/service/mail_service"
 	"billionmail-core/internal/service/public"
 	"context"
-	"github.com/gogf/gf/v2/errors/gerror"
-	"github.com/gogf/gf/v2/frame/g"
 	"strings"
 	"time"
+
+	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
 
 	"billionmail-core/api/batch_mail/v1"
 )
@@ -83,10 +85,20 @@ func (c *ControllerV1) ApiMailBatchSend(ctx context.Context, req *v1.ApiMailBatc
 	now := int(time.Now().Unix())
 	for _, recipient := range validRecipients {
 
-		_, err = ensureContactAndGroup(ctx, recipient, apiTemplate.Id)
-		if err != nil {
-
-			continue
+		if apiTemplate.GroupId > 0 {
+			// Add to the specified existing group
+			_, err = contact.AddContactToGroup(ctx, recipient, apiTemplate.GroupId)
+			if err != nil {
+				g.Log().Warningf(ctx, "Failed to add contact %s to group %d: %v", recipient, apiTemplate.GroupId, err)
+				continue
+			}
+		} else {
+			// Use the old logic to create an API-specific group
+			_, err = ensureContactAndGroup(ctx, recipient, apiTemplate.Id)
+			if err != nil {
+				g.Log().Warningf(ctx, "Failed to ensure contact and group for %s with API ID %d: %v", recipient, apiTemplate.Id, err)
+				continue
+			}
 		}
 		// 生成messageId
 		sender, err := mail_service.NewEmailSenderWithLocal(addresser)

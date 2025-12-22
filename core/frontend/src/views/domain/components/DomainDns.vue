@@ -42,6 +42,34 @@
 			</n-table>
 			<div class="record-title">{{ t('domain.dns.step3.title') }}</div>
 			<div class="record-desc">{{ t('domain.dns.step3.description') }}</div>
+			<div class="flex items-center gap-4px mb-12px">
+				<div class="flex items-center gap-4px">
+					<n-popover trigger="hover">
+						<template #trigger>
+							<i class="i-custom:help text-primary"></i>
+						</template>
+						<bt-tips>
+							<li>{{ t('domain.dns.dkim.tips.line1') }}</li>
+							<li>{{ t('domain.dns.dkim.tips.line2') }}</li>
+							<li>{{ t('domain.dns.dkim.tips.line3') }}</li>
+						</bt-tips>
+					</n-popover>
+					<span class="text-default">{{ t('domain.dns.dkim.formatLabel') }}</span>
+				</div>
+
+				<!-- 改成按钮组样式，并自定义内容 -->
+				<n-radio-group v-model:value="dkimKeySize">
+					<n-radio value="2048">
+						<span>{{ t('domain.dns.dkim.keySize.option2048') }}</span>
+					</n-radio>
+
+					<n-radio value="1024">
+						<div class="radio-card">
+							<span>{{ t('domain.dns.dkim.keySize.option1024') }}</span>
+						</div>
+					</n-radio>
+				</n-radio-group>
+			</div>
 			<n-table size="small" class="mb-24px">
 				<thead>
 					<tr>
@@ -63,7 +91,7 @@
 					</tr>
 					<tr>
 						<td>TXT</td>
-						<td>default._domainkey</td>
+						<td>{{ dkimHost }}</td>
 						<td>
 							<n-ellipsis class="mr-4px max-w-320px!">
 								{{ dkimValue || '--' }}
@@ -88,8 +116,10 @@
 				</tbody>
 			</n-table>
 			<div class="record-title">{{ t('domain.dns.step4.title') }}</div>
-			<div class="record-desc">{{ t('domain.dns.step4.description1') }}</div>
-			<div class="record-desc">{{ t('domain.dns.step4.description2') }}</div>
+			<div class="record-desc leading-20px">
+				<div>{{ t('domain.dns.step4.description1') }}</div>
+				<div>{{ t('domain.dns.step4.description2') }}</div>
+			</div>
 		</div>
 		<div class="flex justify-center mt-24px">
 			<n-button type="primary" @click="onVerify">{{ t('domain.dns.verify') }}</n-button>
@@ -110,6 +140,8 @@ const { t } = useI18n()
 
 const { copyText } = useCopy()
 
+const dkimKeySize = ref('2048')
+
 const statusData = ref<MailDomain[]>([])
 
 const getRecordValue = (record: string, key: 'host' | 'value' = 'value') => {
@@ -120,7 +152,11 @@ const getRecordValue = (record: string, key: 'host' | 'value' = 'value') => {
 }
 
 const dkimValue = computed(() => {
-	return getRecordValue('dkim')
+	return dkimKeySize.value === '2048' ? getRecordValue('dkim') : getRecordValue('dkim_short')
+})
+
+const dkimHost = computed(() => {
+	return dkimKeySize.value === '2048' ? getRecordValue('dkim', 'host') : getRecordValue('dkim_short', 'host')
 })
 
 const aValue = computed(() => {
@@ -196,7 +232,8 @@ const statusColumns = ref<DataTableColumns<MailDomain>>([
 		title: 'DKIM',
 		render: row => {
 			const dkim = row.dns_records.dkim
-			return <StatusCol status={dkim?.valid || false}></StatusCol>
+			const dkimShort = row.dns_records.dkim_short
+			return <StatusCol status={dkim?.valid || dkimShort?.valid || false}></StatusCol>
 		},
 	},
 	{
@@ -241,14 +278,14 @@ const [Modal, modalApi] = useModal({
 
 <style lang="scss" scoped>
 .record-title {
-	margin-bottom: 10px;
+	margin-bottom: 5px;
 	font-size: 14px;
 	color: var(--color-text-1);
 	font-weight: 600;
 }
 
 .record-desc {
-	margin-bottom: 10px;
+	margin-bottom: 12px;
 	font-size: 12px;
 	color: var(--color-text-2);
 }

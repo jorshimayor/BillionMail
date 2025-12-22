@@ -114,3 +114,16 @@ export const testConnection = (params: { domain: string; outbound_ip: string }) 
 export const checkAiConfiguration = () => {
 	return instance.post('/askai/supplier/status')
 }
+
+export const checkDomainBlacklist = (params: { a_record: string }) => {
+	return instance.post('/domain_blocklist/check', params, {
+		fetchOptions: {
+			loading: t('domain.api.loading.detecting'),
+			successMessage: true,
+		},
+	})
+}
+
+export const getCheckLogs = (params: { path: string }) => {
+	return instance.get('/domain_blocklist/logs', { params })
+}

@@ -6,13 +6,14 @@ import (
 	"billionmail-core/internal/service/public"
 	"context"
 	"fmt"
+	"sort"
+	"strings"
+	"time"
+
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/util/gconv"
-	"sort"
-	"strings"
-	"time"
 )
 
 // Overview maillog data overview structure
@@ -659,6 +660,36 @@ func (o *Overview) FailedList(campaignID int64, domain string, startTime, endTim
 	query.Fields("coalesce(d.description, sm.description) as description")
 
 	query.Where("sm.status != ?", "sent")
+
+	query.OrderDesc("sm.log_time_millis")
+
+	results, err := query.All()
+	if err != nil {
+		g.Log().Error(context.Background(), err)
+		return nil
+	}
+
+	lst := make([]map[string]interface{}, 0, len(results))
+	for _, item := range results {
+		lst = append(lst, item.Map())
+	}
+
+	return lst
+}
+
+// description FailedListBounced
+func (o *Overview) FailedListBounced(campaignID int64, domain string, startTime, endTime int64) []map[string]interface{} {
+
+	startTime, endTime = o.filterAndPrepareTimeSection(startTime, endTime)
+
+	query := o.buildBaseQuery(campaignID, domain, startTime, endTime)
+
+	query.Fields("sm.recipient")
+	query.Fields("sm.status")
+	query.Fields("sm.description")
+	query.Fields("sm.log_time")
+
+	query.Where("sm.status = ?", "bounced")
 
 	query.OrderDesc("sm.log_time_millis")
 

@@ -7,11 +7,12 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/hex"
-	"github.com/gogf/gf/v2/errors/gerror"
-	"github.com/gogf/gf/v2/frame/g"
 	"net"
 	"strings"
 	"time"
+
+	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
 )
 
 func generateApiKey() (string, error) {
@@ -55,12 +56,13 @@ func (c *ControllerV1) ApiTemplatesCreate(ctx context.Context, req *v1.ApiTempla
 		"api_key":              apiKey,
 		"api_name":             req.ApiName,
 		"template_id":          req.TemplateId,
+		"group_id":             req.GroupId,
 		"subject":              req.Subject,
 		"addresser":            req.Addresser,
 		"full_name":            req.FullName,
 		"unsubscribe":          req.Unsubscribe,
-		"track_open":           1,
-		"track_click":          1,
+		"track_open":           req.TrackOpen,
+		"track_click":          req.TrackClick,
 		"active":               req.Active,
 		"expire_time":          0,
 		"last_key_update_time": time.Now().Unix(),

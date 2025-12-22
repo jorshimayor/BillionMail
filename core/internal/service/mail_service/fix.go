@@ -175,7 +175,9 @@ func FixRspamdDKIMSigningConfig(ctx context.Context) {
 
 	// Read the DKIM signing configuration file each rows
 	err := public.ReadEach(public.AbsPath(filepath.Join(consts.RSPAMD_LOCAL_D_PATH, "dkim_signing.conf")), func(row string, cnt int) bool {
-		if strings.HasPrefix(strings.TrimSpace(row), "sign_headers") {
+		cleanRow := strings.TrimSpace(row)
+
+		if (strings.HasPrefix(cleanRow, "sign_headers") || strings.HasPrefix(cleanRow, "use_esld")) && strings.Contains(cleanRow, "=") {
 			return true
 		}
 
@@ -189,6 +191,7 @@ func FixRspamdDKIMSigningConfig(ctx context.Context) {
 		return
 	}
 
+	// Remove leading empty lines
 	lineLen := len(lines)
 	lineBegin := -1
 
@@ -203,7 +206,10 @@ func FixRspamdDKIMSigningConfig(ctx context.Context) {
 		lines = lines[lineBegin:lineLen]
 	}
 
-	lines = append([]string{"sign_headers = \"from:sender:reply-to:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding:content-language:resent-to:resent-cc:resent-from:resent-sender:resent-message-id:in-reply-to:references:list-id:list-help:list-owner:list-unsubscribe:list-subscribe:list-post:list-unsubscribe-post:disposition-notification-to:disposition-notification-options:original-recipient:openpgp:autocrypt\";\n\n"}, lines...)
+	lines = append([]string{
+		"sign_headers = \"from:sender:reply-to:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding:content-language:resent-to:resent-cc:resent-from:resent-sender:resent-message-id:in-reply-to:references:list-id:list-help:list-owner:list-unsubscribe:list-subscribe:list-post:list-unsubscribe-post:disposition-notification-to:disposition-notification-options:original-recipient:openpgp:autocrypt\";\n\n",
+		"use_esld = false;\n\n",
+	}, lines...)
 
 	// Write the updated lines back to the DKIM signing configuration file
 	_, err = public.WriteFile(public.AbsPath(filepath.Join(consts.RSPAMD_LOCAL_D_PATH, "dkim_signing.conf")), strings.Join(lines, ""))

@@ -5,8 +5,9 @@ import (
 	"billionmail-core/internal/service/maillog_stat"
 	"context"
 	"fmt"
-	"github.com/gogf/gf/v2/frame/g"
 	"time"
+
+	"github.com/gogf/gf/v2/frame/g"
 )
 
 func GetListWithPage(ctx context.Context, page, pageSize int, keyword string, addType int) (total int, list []*entity.AbnormalRecipient, err error) {
@@ -227,21 +228,41 @@ func AbnormalRecipientAutoStat(ctx context.Context) {
 	now := time.Now().Unix()
 
 	overview := maillog_stat.NewOverview()
-	failedList := overview.FailedList(0, "", lastTime, now)
+	failedList := overview.FailedListBounced(0, "", lastTime, now)
 
-	recipientSet := make(map[string]struct{})
+
+	recipientDetailsMap := make(map[string]*RecipientDetail)
 	for _, item := range failedList {
-		if recipient, ok := item["recipient"].(string); ok && recipient != "" {
-			recipientSet[recipient] = struct{}{}
+		recipient, recipientOk := item["recipient"].(string)
+		if !recipientOk || recipient == "" {
+			continue
+		}
+
+
+		description, descOk := item["description"].(string)
+		if !descOk {
+			description = "Unknown error"
+		}
+
+
+		if _, exists := recipientDetailsMap[recipient]; !exists {
+			recipientDetailsMap[recipient] = &RecipientDetail{
+				Email:       recipient,
+				ErrorReason: description,
+			}
+		} else {
+			recipientDetailsMap[recipient].ErrorReason = description
 		}
 	}
-	var recipients []string
-	for r := range recipientSet {
-		recipients = append(recipients, r)
+
+	var recipientDetails []RecipientDetail
+	for _, detail := range recipientDetailsMap {
+		recipientDetails = append(recipientDetails, *detail)
 	}
 
-	if len(recipients) > 0 {
-		_ = BatchUpsertAbnormalRecipients(ctx, recipients, 2, "Automatic statistics")
+	if len(recipientDetails) > 0 {
+
+		_ = BatchUpsertAbnormalRecipientsWithDetails(ctx, recipientDetails, 2, "Automatic statistics")
 	}
 
 	setLastStatTime(ctx, now)

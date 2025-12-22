@@ -3,6 +3,7 @@
 		<SecuritySettings />
 		<NetworkSettings />
 		<SystemSettings />
+		<NotifySettings />
 	</div>
 </template>
 
@@ -12,6 +13,7 @@ import { useSettingsStore } from '@/views/settings/common/store'
 import SecuritySettings from './components/SecuritySettings.vue'
 import NetworkSettings from './components/NetworkSettings.vue'
 import SystemSettings from './components/SystemSettings.vue'
+import NotifySettings from './components/Notify/NotifySettings.vue'
 
 const settingsStore = useSettingsStore()
 

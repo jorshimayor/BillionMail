@@ -2,6 +2,7 @@ package v1
 
 import (
 	"billionmail-core/utility/types/api_v1"
+
 	"github.com/gogf/gf/v2/frame/g"
 )
 
@@ -322,7 +323,7 @@ type GetSingleGroupTagContactCountReq struct {
 	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
 	GroupId       int    `json:"group_id" v:"required" dc:"Group ID"`
 	TagIds        []int  `json:"tag_ids"  dc:"Tag IDs"`
-	TagLogic      string `json:"tag_logic" v:"required|in:AND,OR" dc:"Tag Logic (AND/OR)"`
+	TagLogic      string `json:"tag_logic" v:"required|in:AND,OR,NOT" dc:"Tag Logic (AND/OR/NOT)"`
 }
 
 type GetSingleGroupTagContactCountRes struct {

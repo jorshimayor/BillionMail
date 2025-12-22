@@ -41,10 +41,11 @@ type Contact struct {
 }
 
 type SubscribeSubmitReq struct {
-	g.Meta  `path:"/subscribe/submit" tags:"Subscribe" method:"post" summary:"Subscribe to the service"`
-	Email   string            `json:"email" dc:"Email address for subscription"`
-	Token   string            `json:"token" dc:"Subscription token"`
-	Attribs map[string]string `json:"attribs" dc:"Additional attributes for subscription, e.g., {'name': 'John Doe', 'phone': '1234567890'}"`
+	g.Meta        `path:"/subscribe/submit" tags:"Subscribe" method:"post" summary:"Subscribe to the service"`
+	Authorization string            `json:"authorization" dc:"Authorization" in:"header"`
+	Email         string            `json:"email" dc:"Email address for subscription"`
+	Token         string            `json:"token" dc:"Subscription token"`
+	Attribs       map[string]string `json:"attribs" dc:"Additional attributes for subscription, e.g., {'name': 'John Doe', 'phone': '1234567890'}"`
 }
 
 type SubscribeSubmitRes struct {
@@ -52,9 +53,10 @@ type SubscribeSubmitRes struct {
 }
 
 type SubscribeConfirmReq struct {
-	g.Meta `path:"/subscribe/confirm" tags:"Subscribe" method:"get" summary:"Confirm subscription"`
-	Token  string `json:"token" dc:"Subscription token"`
-	Email  string `json:"email" dc:"Email address for subscription"`
+	g.Meta        `path:"/subscribe/confirm" tags:"Subscribe" method:"get" summary:"Confirm subscription"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Token         string `json:"token" dc:"Subscription token"`
+	Email         string `json:"email" dc:"Email address for subscription"`
 }
 
 type SubscribeConfirmRes struct {

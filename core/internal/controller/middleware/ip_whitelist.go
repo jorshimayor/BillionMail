@@ -3,10 +3,11 @@ package middleware
 import (
 	"billionmail-core/internal/service/public"
 	"context"
+	"strings"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gfile"
-	"strings"
 )
 
 // Paths excluded from IP whitelist verification
@@ -15,9 +16,10 @@ var ExcludedPaths = map[string]struct{}{
 	"/robots.txt":                    {},
 	"/unsubscribe.html":              {},
 	"/unsubscribe_new.html":          {},
+	"/api/languages/get":             {},
 	"/api/unsubscribe/user_group":    {},
 	"/api/unsubscribe":               {},
-	"api/unsubscribe_new":            {},
+	"/api/unsubscribe_new":           {},
 	"/api/batch_mail/api/send":       {},
 	"/api/batch_mail/api/batch_send": {},
 	"/api/subscribe/submit":          {},
@@ -26,7 +28,8 @@ var ExcludedPaths = map[string]struct{}{
 	"/subscribe_confirm.html":        {},
 	"/subscribe_form.html":           {},
 	"/subscribe_success.html":        {},
-	// other
+	"/unsubscribe_success.html":      {},
+	"/subscribe_form_code.html":      {},
 }
 
 func isExcludedPath(path string) bool {

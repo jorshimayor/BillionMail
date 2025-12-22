@@ -90,8 +90,9 @@ import { checkAiConfiguration, initAiConfiguration } from '@/api/modules/domain'
 import aiModelNotice from '@/assets/images/template/model-notice.png'
 import brandInfoNotice from '@/assets/images/template/create-brand-info.png'
 import { SelectOption } from 'naive-ui'
-import { Message } from '@/utils'
+import { isObject, Message } from '@/utils'
 import { updateHasBrandInfo } from '@/views/domain/pages/editDomain/controller/domainConfiguration.controller'
+import { MailDomain } from '@/views/domain/interface'
 // import { TemplateStore } from '../pages/AITemplate/dto'
 
 // const store = inject<TemplateStore>('modelStore')!
@@ -158,8 +159,10 @@ const canNotUse = computed(() => {
  * @description open modal
  */
 async function open() {
-	const res = (await checkAiConfiguration()) as Record<string, any>
-	aiConfigurationStatus.value = res.is_configured
+	const res = await checkAiConfiguration()
+	if (isObject<{ is_configured: boolean }>(res)) {
+		aiConfigurationStatus.value = res.is_configured
+	}
 	await getDomainList()
 
 	if (globalStore.domainSource) {
@@ -260,13 +263,15 @@ defineExpose({
  * @description Get domain list
  */
 async function getDomainList() {
-	const res = (await instance.get('/domains/list', {
+	const res = await instance.get('/domains/list', {
 		params: {
 			page: 1,
 			page_size: 100,
 		},
-	})) as Record<string, any>
-	domainList.value = res.list
+	})
+	if (isObject<{ list: MailDomain[] }>(res)) {
+		domainList.value = res.list || []
+	}
 	currentDomainOption.value =
 		domainList.value.find((item: SelectOption) => item.domain === sourceDomain.value) || null
 	if (domainList.value.length == 0) {

@@ -3,16 +3,18 @@ package batch_mail
 import (
 	"billionmail-core/api/batch_mail/v1"
 	"billionmail-core/internal/model/entity"
+	"billionmail-core/internal/service/contact"
 	"billionmail-core/internal/service/mail_service"
 	"billionmail-core/internal/service/public"
 	"context"
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/gogf/gf/v2/errors/gerror"
-	"github.com/gogf/gf/v2/frame/g"
 	"strings"
 	"time"
+
+	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
 )
 
 func (c *ControllerV1) ApiMailSend(ctx context.Context, req *v1.ApiMailSendReq) (res *v1.ApiMailSendRes, err error) {
@@ -61,11 +63,24 @@ func (c *ControllerV1) ApiMailSend(ctx context.Context, req *v1.ApiMailSendReq) 
 	}
 
 	// 4. process contact and group
-	_, err = ensureContactAndGroup(ctx, req.Recipient, apiTemplate.Id)
-	if err != nil {
-		res.Code = 1003
-		res.SetError(gerror.New(public.LangCtx(ctx, "Failed to process recipient: {}", err.Error())))
-		return res, nil
+	if apiTemplate.GroupId > 0 {
+		// Add to the specified existing group
+		_, err = contact.AddContactToGroup(ctx, req.Recipient, apiTemplate.GroupId)
+		if err != nil {
+			g.Log().Warningf(ctx, "Failed to add contact %s to group %d: %v", req.Recipient, apiTemplate.GroupId, err)
+			res.Code = 1003
+			res.SetError(gerror.New(public.LangCtx(ctx, "Failed to process recipient: {}", err.Error())))
+			return res, nil
+		}
+	} else {
+		// Use the old logic to create an API-specific group
+		_, err = ensureContactAndGroup(ctx, req.Recipient, apiTemplate.Id)
+		if err != nil {
+			g.Log().Warningf(ctx, "Failed to ensure contact and group for %s with API ID %d: %v", req.Recipient, apiTemplate.Id, err)
+			res.Code = 1003
+			res.SetError(gerror.New(public.LangCtx(ctx, "Failed to process recipient: {}", err.Error())))
+			return res, nil
+		}
 	}
 
 	// 5. process addresser

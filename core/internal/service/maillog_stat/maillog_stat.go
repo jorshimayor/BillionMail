@@ -4,6 +4,7 @@ import (
 	"billionmail-core/internal/consts"
 	"billionmail-core/internal/service/public"
 	"context"
+	"errors"
 	"fmt"
 	"github.com/gogf/gf/os/gfsnotify"
 	"github.com/gogf/gf/v2/database/gdb"
@@ -337,6 +338,10 @@ func (ms *MaillogStat) Analysis(ctx context.Context) (<-chan MailRecorfContract,
 	ms.resetData()
 
 	if _, err := os.Stat(ms.maillogPath); err != nil {
+		// If file does not exist, return nil channel
+		if errors.Is(err, os.ErrNotExist) {
+			return nil, nil
+		}
 		return nil, err
 	}
 

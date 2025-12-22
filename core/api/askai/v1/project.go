@@ -8,9 +8,10 @@ import (
 
 // CreateReq is the request structure for creating a new project configuration in AskAi.
 type CreateReq struct {
-	g.Meta `path:"/askai/project/create" method:"post" tags:"AskAi" summary:"create project config"`
-	Domain string   `json:"domain" dc:"domain" v:"required#domain is required"`
-	Urls   []string `json:"urls" dc:"urls"`
+	g.Meta        `path:"/askai/project/create" method:"post" tags:"AskAi" summary:"create project config"`
+	Authorization string   `json:"authorization" dc:"Authorization" in:"header"`
+	Domain        string   `json:"domain" dc:"domain" v:"required#domain is required"`
+	Urls          []string `json:"urls" dc:"urls"`
 }
 type CreateRes struct {
 	api_v1.StandardRes
@@ -18,8 +19,9 @@ type CreateRes struct {
 
 // GetBaseInfoReq is the request structure for retrieving the base information of a project in AskAi.
 type GetBaseInfoReq struct {
-	g.Meta `path:"/askai/project/get_base_info" method:"post" tags:"AskAi" summary:"get project base info"`
-	Domain string `json:"domain" dc:"domain" v:"required#domain is required"`
+	g.Meta        `path:"/askai/project/get_base_info" method:"post" tags:"AskAi" summary:"get project base info"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Domain        string `json:"domain" dc:"domain" v:"required#domain is required"`
 }
 type GetBaseInfoRes struct {
 	api_v1.StandardRes
@@ -28,6 +30,7 @@ type GetBaseInfoRes struct {
 // ModifyBaseInfoReq is the request structure for modifying the base information of a project in AskAi.
 type ModifyBaseInfoReq struct {
 	g.Meta        `path:"/askai/project/modify_base_info" method:"post" tags:"AskAi" summary:"modify project base info"`
+	Authorization string   `json:"authorization" dc:"Authorization" in:"header"`
 	Domain        string   `json:"domain" dc:"domain" v:"required#domain is required"`
 	ProjectName   string   `json:"project_name" dc:"project name" v:"required#project name is required"`
 	Description   string   `json:"description" dc:"project description"`
@@ -43,11 +46,12 @@ type ModifyBaseInfoRes struct {
 
 // ModifyKnowledgeBaseFileReq is the request structure for modifying a knowledge base file in AskAi.
 type ModifyKnowledgeBaseFileReq struct {
-	g.Meta  `path:"/askai/project/modify_knowledge_base_file" method:"post" tags:"AskAi" summary:"modify knowledge base file"`
-	Domain  string `json:"domain" dc:"domain" v:"required#domain is required"`
-	Kid     string `json:"kid" dc:"knowledge base file id" v:"required#knowledge base file id is required"`
-	Title   string `json:"title" dc:"title" v:"required#title is required"`
-	Content string `json:"content" dc:"content" v:"required#content is required"`
+	g.Meta        `path:"/askai/project/modify_knowledge_base_file" method:"post" tags:"AskAi" summary:"modify knowledge base file"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Domain        string `json:"domain" dc:"domain" v:"required#domain is required"`
+	Kid           string `json:"kid" dc:"knowledge base file id" v:"required#knowledge base file id is required"`
+	Title         string `json:"title" dc:"title" v:"required#title is required"`
+	Content       string `json:"content" dc:"content" v:"required#content is required"`
 }
 type ModifyKnowledgeBaseFileRes struct {
 	api_v1.StandardRes
@@ -55,10 +59,11 @@ type ModifyKnowledgeBaseFileRes struct {
 
 // CreateKnowledgeBaseFileReq is the request structure for creating a new knowledge base file in AskAi.
 type CreateKnowledgeBaseFileReq struct {
-	g.Meta  `path:"/askai/project/create_knowledge_base_file" method:"post" tags:"AskAi" summary:"create knowledge base file"`
-	Domain  string `json:"domain" dc:"domain" v:"required#domain is required"`
-	Title   string `json:"title" dc:"title" v:"required#title is required"`
-	Content string `json:"content" dc:"content" v:"required#content is required"`
+	g.Meta        `path:"/askai/project/create_knowledge_base_file" method:"post" tags:"AskAi" summary:"create knowledge base file"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Domain        string `json:"domain" dc:"domain" v:"required#domain is required"`
+	Title         string `json:"title" dc:"title" v:"required#title is required"`
+	Content       string `json:"content" dc:"content" v:"required#content is required"`
 }
 type CreateKnowledgeBaseFileRes struct {
 	api_v1.StandardRes
@@ -66,9 +71,10 @@ type CreateKnowledgeBaseFileRes struct {
 
 // RemoveKnowledgeBaseFileReq is the request structure for removing a knowledge base file in AskAi.
 type RemoveKnowledgeBaseFileReq struct {
-	g.Meta `path:"/askai/project/remove_knowledge_base_file" method:"post" tags:"AskAi" summary:"remove knowledge base file"`
-	Domain string `json:"domain" dc:"domain" v:"required#domain is required"`
-	Kid    string `json:"kid" dc:"knowledge base file id" v:"required#knowledge base file id is required"`
+	g.Meta        `path:"/askai/project/remove_knowledge_base_file" method:"post" tags:"AskAi" summary:"remove knowledge base file"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Domain        string `json:"domain" dc:"domain" v:"required#domain is required"`
+	Kid           string `json:"kid" dc:"knowledge base file id" v:"required#knowledge base file id is required"`
 }
 type RemoveKnowledgeBaseFileRes struct {
 	api_v1.StandardRes
@@ -76,8 +82,9 @@ type RemoveKnowledgeBaseFileRes struct {
 
 // GetCompanyProfileReq is the request structure for retrieving the company profile in AskAi.
 type GetCompanyProfileReq struct {
-	g.Meta `path:"/askai/project/get_company_profile" method:"post" tags:"AskAi" summary:"get company profile"`
-	Domain string `json:"domain" dc:"domain" v:"required#domain is required"`
+	g.Meta        `path:"/askai/project/get_company_profile" method:"post" tags:"AskAi" summary:"get company profile"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Domain        string `json:"domain" dc:"domain" v:"required#domain is required"`
 }
 type GetCompanyProfileRes struct {
 	api_v1.StandardRes
@@ -86,6 +93,7 @@ type GetCompanyProfileRes struct {
 // ModifyCompanyProfileReq is the request structure for modifying the company profile in AskAi.
 type ModifyCompanyProfileReq struct {
 	g.Meta           `path:"/askai/project/modify_company_profile" method:"post" tags:"AskAi" summary:"modify company profile"`
+	Authorization    string `json:"authorization" dc:"Authorization" in:"header"`
 	Domain           string `json:"domain" dc:"domain" v:"required#domain is required"`
 	LegalCompanyName string `json:"legal_company_name" dc:"legal company name"`
 	Website          string `json:"website" dc:"website"`
@@ -101,8 +109,9 @@ type ModifyCompanyProfileRes struct {
 
 // GetStyleConfigReq is the request structure for retrieving the style configuration of a project in AskAi.
 type GetStyleConfigReq struct {
-	g.Meta `path:"/askai/project/get_style_config" method:"post" tags:"AskAi" summary:"get style config"`
-	Domain string `json:"domain" dc:"domain" v:"required#domain is required"`
+	g.Meta        `path:"/askai/project/get_style_config" method:"post" tags:"AskAi" summary:"get style config"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Domain        string `json:"domain" dc:"domain" v:"required#domain is required"`
 }
 
 type GetStyleConfigRes struct {
@@ -112,6 +121,7 @@ type GetStyleConfigRes struct {
 // ModifyStyleConfigReq is the request structure for modifying the style configuration of a project in AskAi.
 type ModifyStyleConfigReq struct {
 	g.Meta              `path:"/askai/project/modify_style_config" method:"post" tags:"AskAi" summary:"modify style config"`
+	Authorization       string `json:"authorization" dc:"Authorization" in:"header"`
 	Domain              string `json:"domain" dc:"domain" v:"required#domain is required"`
 	AccentColor         string `json:"accent_color" dc:"accent color"`
 	TextColor           string `json:"text_color" dc:"text color"`
@@ -128,8 +138,9 @@ type ModifyStyleConfigRes struct {
 
 // GetSitemapReq is the request structure for retrieving the sitemap of a project in AskAi.
 type GetSitemapReq struct {
-	g.Meta `path:"/askai/project/get_sitemap" method:"post" tags:"AskAi" summary:"get sitemap"`
-	Domain string `json:"domain" dc:"domain" v:"required#domain is required"`
+	g.Meta        `path:"/askai/project/get_sitemap" method:"post" tags:"AskAi" summary:"get sitemap"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Domain        string `json:"domain" dc:"domain" v:"required#domain is required"`
 }
 type GetSitemapRes struct {
 	api_v1.StandardRes
@@ -137,9 +148,10 @@ type GetSitemapRes struct {
 
 // RemoveSitemapNodeReq is the request structure for removing a node from the sitemap of a project in AskAi.
 type RemoveSitemapNodeReq struct {
-	g.Meta  `path:"/askai/project/remove_sitemap_node" method:"post" tags:"AskAi" summary:"remove sitemap node"`
-	Domain  string `json:"domain" dc:"domain" v:"required#domain is required"`
-	UriPath string `json:"uri_path" dc:"uri path" v:"required#uri path is required"`
+	g.Meta        `path:"/askai/project/remove_sitemap_node" method:"post" tags:"AskAi" summary:"remove sitemap node"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Domain        string `json:"domain" dc:"domain" v:"required#domain is required"`
+	UriPath       string `json:"uri_path" dc:"uri path" v:"required#uri path is required"`
 }
 
 type RemoveSitemapNodeRes struct {
@@ -148,10 +160,11 @@ type RemoveSitemapNodeRes struct {
 
 // AddSitemapNodeReq is the request structure for adding a node to the sitemap of a project in AskAi.
 type AddSitemapNodeReq struct {
-	g.Meta  `path:"/askai/project/add_sitemap_node" method:"post" tags:"AskAi" summary:"add sitemap node"`
-	Domain  string `json:"domain" dc:"domain" v:"required#domain is required"`
-	Title   string `json:"title" dc:"title" v:"required#title is required"`
-	UriPath string `json:"uri_path" dc:"uri path" v:"required#uri path is required"`
+	g.Meta        `path:"/askai/project/add_sitemap_node" method:"post" tags:"AskAi" summary:"add sitemap node"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Domain        string `json:"domain" dc:"domain" v:"required#domain is required"`
+	Title         string `json:"title" dc:"title" v:"required#title is required"`
+	UriPath       string `json:"uri_path" dc:"uri path" v:"required#uri path is required"`
 }
 type AddSitemapNodeRes struct {
 	api_v1.StandardRes
@@ -159,8 +172,9 @@ type AddSitemapNodeRes struct {
 
 // GetFooterReq is the request structure for retrieving the footer configuration of a project in AskAi.
 type GetFooterReq struct {
-	g.Meta `path:"/askai/project/get_footer" method:"post" tags:"AskAi" summary:"get footer config"`
-	Domain string `json:"domain" dc:"domain" v:"required#domain is required"`
+	g.Meta        `path:"/askai/project/get_footer" method:"post" tags:"AskAi" summary:"get footer config"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Domain        string `json:"domain" dc:"domain" v:"required#domain is required"`
 }
 type GetFooterRes struct {
 	api_v1.StandardRes
@@ -169,6 +183,7 @@ type GetFooterRes struct {
 // ModifyFooterReq is the request structure for modifying the footer configuration of a project in AskAi.
 type ModifyFooterReq struct {
 	g.Meta        `path:"/askai/project/modify_footer" method:"post" tags:"AskAi" summary:"modify footer config"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
 	Domain        string `json:"domain" dc:"domain" v:"required#domain is required"`
 	CopyrightText string `json:"copyright_text" dc:"copyright text" v:"required#copyright text is required"`
 	Disclaimer    string `json:"disclaimer" dc:"disclaimer" v:"required#disclaimer is required"`
@@ -179,8 +194,9 @@ type ModifyFooterRes struct {
 
 // GetPromptReq is the request structure for retrieving the prompt configuration of a project in AskAi.
 type GetPromptReq struct {
-	g.Meta `path:"/askai/project/get_prompt" method:"post" tags:"AskAi" summary:"get prompt config"`
-	Domain string `json:"domain" dc:"domain" v:"required#domain is required"`
+	g.Meta        `path:"/askai/project/get_prompt" method:"post" tags:"AskAi" summary:"get prompt config"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Domain        string `json:"domain" dc:"domain" v:"required#domain is required"`
 }
 type GetPromptRes struct {
 	api_v1.StandardRes
@@ -188,9 +204,10 @@ type GetPromptRes struct {
 
 // ModifyPromptReq is the request structure for modifying the prompt configuration of a project in AskAi.
 type ModifyPromptReq struct {
-	g.Meta `path:"/askai/project/modify_prompt" method:"post" tags:"AskAi" summary:"modify prompt config"`
-	Domain string `json:"domain" dc:"domain" v:"required#domain is required"`
-	Prompt string `json:"prompt" dc:"prompt" v:"required#prompt is required"`
+	g.Meta        `path:"/askai/project/modify_prompt" method:"post" tags:"AskAi" summary:"modify prompt config"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Domain        string `json:"domain" dc:"domain" v:"required#domain is required"`
+	Prompt        string `json:"prompt" dc:"prompt" v:"required#prompt is required"`
 }
 type ModifyPromptRes struct {
 	api_v1.StandardRes
@@ -198,12 +215,13 @@ type ModifyPromptRes struct {
 
 // UploadImageReq is the request structure for uploading an image to a project in AskAi.
 type UploadImageReq struct {
-	g.Meta   `path:"/askai/project/upload_image" method:"post" tags:"AskAi" summary:"upload image"`
-	Domain   string `json:"domain" dc:"domain" v:"required#domain is required"`
-	Image    string `json:"image" dc:"image" v:"required#image is required"`
-	Filename string `json:"filename" dc:"filename" v:"required#filename is required"`
-	AltText  string `json:"alt_text" dc:"alt text" v:"required#alt text is required"`
-	ImageTag string `json:"image_tag" dc:"image tag" v:"required#image tag is required" d:"Image tag is used to identify the image in the project, e.g., 'logo', 'banner', etc."`
+	g.Meta        `path:"/askai/project/upload_image" method:"post" tags:"AskAi" summary:"upload image"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Domain        string `json:"domain" dc:"domain" v:"required#domain is required"`
+	Image         string `json:"image" dc:"image" v:"required#image is required"`
+	Filename      string `json:"filename" dc:"filename" v:"required#filename is required"`
+	AltText       string `json:"alt_text" dc:"alt text" v:"required#alt text is required"`
+	ImageTag      string `json:"image_tag" dc:"image tag" v:"required#image tag is required" d:"Image tag is used to identify the image in the project, e.g., 'logo', 'banner', etc."`
 }
 
 type UploadImageRes struct {
@@ -212,11 +230,12 @@ type UploadImageRes struct {
 
 // ModifyImageReq is the request structure for modifying an existing image in a project in AskAi.
 type ModifyImageReq struct {
-	g.Meta   `path:"/askai/project/modify_image" method:"post" tags:"AskAi" summary:"modify image"`
-	Domain   string `json:"domain" dc:"domain" v:"required#domain is required"`
-	ImageId  string `json:"image_id" dc:"image id" v:"required#image id is required"`
-	AltText  string `json:"alt_text" dc:"alt text" v:"required#alt text is required"`
-	ImageTag string `json:"image_tag" dc:"image tag" v:"required#image tag is required" d:"Image tag is used to identify the image in the project, e.g., 'logo', 'banner', etc."`
+	g.Meta        `path:"/askai/project/modify_image" method:"post" tags:"AskAi" summary:"modify image"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Domain        string `json:"domain" dc:"domain" v:"required#domain is required"`
+	ImageId       string `json:"image_id" dc:"image id" v:"required#image id is required"`
+	AltText       string `json:"alt_text" dc:"alt text" v:"required#alt text is required"`
+	ImageTag      string `json:"image_tag" dc:"image tag" v:"required#image tag is required" d:"Image tag is used to identify the image in the project, e.g., 'logo', 'banner', etc."`
 }
 type ModifyImageRes struct {
 	api_v1.StandardRes
@@ -224,9 +243,10 @@ type ModifyImageRes struct {
 
 // RemoveImageReq is the request structure for removing an image from a project in AskAi.
 type RemoveImageReq struct {
-	g.Meta  `path:"/askai/project/remove_image" method:"post" tags:"AskAi" summary:"remove image"`
-	Domain  string `json:"domain" dc:"domain" v:"required#domain is required"`
-	ImageId string `json:"image_id" dc:"image id" v:"required#image id is required"`
+	g.Meta        `path:"/askai/project/remove_image" method:"post" tags:"AskAi" summary:"remove image"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Domain        string `json:"domain" dc:"domain" v:"required#domain is required"`
+	ImageId       string `json:"image_id" dc:"image id" v:"required#image id is required"`
 }
 
 type RemoveImageRes struct {
@@ -235,8 +255,9 @@ type RemoveImageRes struct {
 
 // GetImagesReq is the request structure for retrieving images associated with a project in AskAi.
 type GetImagesReq struct {
-	g.Meta `path:"/askai/project/get_images" method:"post" tags:"AskAi" summary:"get images"`
-	Domain string `json:"domain" dc:"domain" v:"required#domain is required"`
+	g.Meta        `path:"/askai/project/get_images" method:"post" tags:"AskAi" summary:"get images"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Domain        string `json:"domain" dc:"domain" v:"required#domain is required"`
 }
 
 type GetImagesRes struct {
@@ -245,8 +266,9 @@ type GetImagesRes struct {
 
 // GetProjectStatusReq is the request structure for retrieving the status of a project in AskAi.
 type GetProjectStatusReq struct {
-	g.Meta `path:"/askai/project/get_project_status" method:"post" tags:"AskAi" summary:"get project status"`
-	Domain string `json:"domain" dc:"domain" v:"required#domain is required"`
+	g.Meta        `path:"/askai/project/get_project_status" method:"post" tags:"AskAi" summary:"get project status"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Domain        string `json:"domain" dc:"domain" v:"required#domain is required"`
 }
 type GetProjectStatusRes struct {
 	api_v1.StandardRes
@@ -254,9 +276,10 @@ type GetProjectStatusRes struct {
 
 // SetProjectStatusReq is the request structure for setting the status of a project in AskAi.
 type SetProjectStatusReq struct {
-	g.Meta `path:"/askai/project/set_project_status" method:"post" tags:"AskAi" summary:"set project status"`
-	Domain string `json:"domain" dc:"domain" v:"required#domain is required"`
-	Status bool   `json:"status" dc:"status" v:"required#status is required"`
+	g.Meta        `path:"/askai/project/set_project_status" method:"post" tags:"AskAi" summary:"set project status"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Domain        string `json:"domain" dc:"domain" v:"required#domain is required"`
+	Status        bool   `json:"status" dc:"status" v:"required#status is required"`
 }
 
 type SetProjectStatusRes struct {

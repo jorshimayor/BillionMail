@@ -27,6 +27,8 @@
 				<ssl-modal />
 				<dns-modal />
 				<domain-ip-set-modal />
+				<blacklist-modal />
+				<check-logs-modal />
 			</template>
 		</bt-table-layout>
 	</div>
@@ -45,6 +47,9 @@ import DomainSsl from './components/DomainSsl/index.vue'
 import DomainDns from './components/DomainDns.vue'
 import DomainIpSet from './components/DomainIpSet.vue'
 import IpStatus from './components/IpStatus.vue'
+import NotSpam from './components/NotSpam.vue'
+import BlacklistDetection from './components/BlacklistDetection.vue'
+import CheckLogs from './components/CheckLogs.vue'
 
 const { t } = useI18n()
 
@@ -88,6 +93,24 @@ const columns = ref<DataTableColumns<MailDomain>>([
 				</div>
 			)
 		},
+	},
+	{
+		key: 'not_in_spam_list',
+		title: 'Not in Spam List',
+		render: row => (
+			<NotSpam
+				record={row.a_record}
+				check-result={row.black_check_result}
+				onShowCheck={() => {
+					blacklistModalApi.setState({ row })
+					blacklistModalApi.open()
+				}}
+				onShowCheckLogs={() => {
+					checkLogsModalApi.setState({ row })
+					checkLogsModalApi.open()
+				}}
+			/>
+		),
 	},
 	{
 		key: 'quota',
@@ -318,8 +341,17 @@ const handleDelete = (row: MailDomain) => {
 	})
 }
 
+const [BlacklistModal, blacklistModalApi] = useModal({
+	component: BlacklistDetection,
+})
+
+const [CheckLogsModal, checkLogsModalApi] = useModal({
+	component: CheckLogs,
+})
+
 // Whether should open create modal automic
 const initDomainFlag = ref('')
+
 onMounted(() => {
 	initDomainFlag.value = route.query.init as string
 	if (initDomainFlag.value === 'init-domain') {

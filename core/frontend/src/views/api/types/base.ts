@@ -21,6 +21,7 @@ export interface Api {
 	click_rate: number
 	delivery_rate: number
 	bounce_rate: number
+	group_id: number
 	ip_whitelist: string[]
 }
 

@@ -2,6 +2,7 @@ package database_initialization
 
 import (
 	"context"
+
 	"github.com/gogf/gf/v2/frame/g"
 )
 
@@ -256,6 +257,9 @@ func init() {
 		_ = AddColumnIfNotExists("email_tasks", "group_id", "INTEGER", "0", true)
 		_ = AddColumnIfNotExists("email_tasks", "tag_ids", "TEXT", "''", false)
 		_ = AddColumnIfNotExists("email_tasks", "tag_logic", "VARCHAR(10)", "'AND'", false)
+
+		//api_templates
+		_ = AddColumnIfNotExists("api_templates", "group_id", "INTEGER", "0", true)
 
 		// unsubscribe_records
 		_ = DropForeignKeyIfExists("unsubscribe_records", "group_id")

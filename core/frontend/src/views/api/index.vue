@@ -5,18 +5,13 @@
 			<div class="flex flex-wrap items-center gap-16px">
 				<div class="flex items-center whitespace-pre">
 					<span class="text-default">{{ $t('api.timeRange') }}</span>
-					<bt-time
-						v-model:value="tableParams.time_range"
-						default-type="last7days"
-						@change="handleRefreshData">
+					<bt-time v-model:value="tableParams.time_range" default-type="last7days" @change="handleRefreshData">
 					</bt-time>
 				</div>
 				<div class="flex items-center whitespace-pre">
 					<span class="text-default">{{ $t('api.status') }}</span>
 					<div class="w-120px">
-						<n-select
-							v-model:value="tableParams.active"
-							:options="activeOptions"
+						<n-select v-model:value="tableParams.active" :options="activeOptions"
 							@update:value="() => fetchTable(true)">
 						</n-select>
 					</div>
@@ -24,16 +19,14 @@
 				<div class="flex items-center whitespace-pre">
 					<span class="text-default">{{ $t('api.search') }}</span>
 					<div class="w-200px">
-						<n-input
-							v-model:value="tableParams.keyword"
-							:placeholder="$t('api.searchPlaceholder')"
+						<n-input v-model:value="tableParams.keyword" :placeholder="$t('api.searchPlaceholder')"
 							@keyup.enter="() => fetchTable(true)">
 						</n-input>
 					</div>
 				</div>
 				<div class="flex gap-8px">
-					<n-button type="primary" ghost @click="() => fetchTable(true)">
-						{{ $t('common.actions.refresh') }}
+					<n-button type="primary" ghost @click="() => fetchTable()">
+						{{ $t('common.actions.search') }}
 					</n-button>
 					<n-button type="primary" ghost @click="handleRefreshData">
 						{{ $t('api.refreshData') }}
@@ -47,9 +40,7 @@
 				<n-button type="primary" @click="handleAdd">
 					{{ $t('api.createNew') }}
 				</n-button>
-				<bt-help
-					href="https://www.billionmail.com/start/api_mail_guide.html"
-					:text="$t('common.actions.help')">
+				<bt-help href="https://www.billionmail.com/start/api_mail_guide.html" :text="$t('common.actions.help')">
 				</bt-help>
 			</template>
 			<template #table>

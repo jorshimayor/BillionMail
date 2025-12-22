@@ -15,11 +15,12 @@ type Alias struct {
 }
 
 type GetMailForwardListReq struct {
-	g.Meta    `path:"/mail_forward/list" method:"get" summary:"get mail forward list"`
-	Domain    string `json:"domain"  desc:"domain filter"`
-	Page      int    `json:"page" v:"min:1" desc:"page num" default:"1"`
-	PageSize  int    `json:"page_size" v:"min:1" desc:"page size" default:"20"`
-	SearchKey string `json:"search_key" desc:"search key, can search address"`
+	g.Meta        `path:"/mail_forward/list" method:"get" summary:"get mail forward list"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Domain        string `json:"domain"  desc:"domain filter"`
+	Page          int    `json:"page" v:"min:1" desc:"page num" default:"1"`
+	PageSize      int    `json:"page_size" v:"min:1" desc:"page size" default:"20"`
+	SearchKey     string `json:"search_key" desc:"search key, can search address"`
 }
 
 type GetMailForwardListRes struct {
@@ -31,10 +32,11 @@ type GetMailForwardListRes struct {
 }
 
 type AddMailForwardReq struct {
-	g.Meta  `path:"/mail_forward/add" method:"post" summary:"add mail forward"`
-	Address string `json:"address" v:"required" desc:"forwarded email address, e.g. user@example.com"`
-	Goto    string `json:"goto" v:"required" desc:"forward target address, multiple addresses separated by newline"`
-	Active  int    `json:"active" v:"in:0,1" desc:"status: 1-enabled, 0-disabled" default:"1"`
+	g.Meta        `path:"/mail_forward/add" method:"post" summary:"add mail forward"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Address       string `json:"address" v:"required" desc:"forwarded email address, e.g. user@example.com"`
+	Goto          string `json:"goto" v:"required" desc:"forward target address, multiple addresses separated by newline"`
+	Active        int    `json:"active" v:"in:0,1" desc:"status: 1-enabled, 0-disabled" default:"1"`
 }
 
 type AddMailForwardRes struct {
@@ -42,10 +44,11 @@ type AddMailForwardRes struct {
 }
 
 type EditMailForwardReq struct {
-	g.Meta  `path:"/mail_forward/edit" method:"post" summary:"edit mail forward"`
-	Address string `json:"address" v:"required" desc:"forwarded email address"`
-	Goto    string `json:"goto" v:"email" desc:"forward target address, multiple addresses separated by newline. not set means only modify status"`
-	Active  int    `json:"active" v:"in:0,1" desc:"status: 1-enabled, 0-disabled"`
+	g.Meta        `path:"/mail_forward/edit" method:"post" summary:"edit mail forward"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Address       string `json:"address" v:"required" desc:"forwarded email address"`
+	Goto          string `json:"goto" v:"email" desc:"forward target address, multiple addresses separated by newline. not set means only modify status"`
+	Active        int    `json:"active" v:"in:0,1" desc:"status: 1-enabled, 0-disabled"`
 }
 
 type EditMailForwardRes struct {
@@ -53,8 +56,9 @@ type EditMailForwardRes struct {
 }
 
 type DeleteMailForwardReq struct {
-	g.Meta  `path:"/mail_forward/delete" method:"post" summary:"delete mail forward"`
-	Address string `json:"address" v:"required" desc:"forwarded email address"`
+	g.Meta        `path:"/mail_forward/delete" method:"post" summary:"delete mail forward"`
+	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+	Address       string `json:"address" v:"required" desc:"forwarded email address"`
 }
 
 type DeleteMailForwardRes struct {

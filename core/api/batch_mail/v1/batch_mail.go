@@ -3,6 +3,7 @@ package v1
 import (
 	"billionmail-core/internal/model/entity"
 	"billionmail-core/utility/types/api_v1"
+
 	"github.com/gogf/gf/v2/frame/g"
 )
 
@@ -44,7 +45,7 @@ type EmailTask struct {
 	GroupName               string    `json:"group_name"      dc:"Group Name"`
 	Tags                    []TagInfo `json:"tags"           dc:"Task Tags"`
 	UseTagFilter            int       `json:"use_tag_filter" dc:"Whether to use tag filter (1: yes, 0: no)"`
-	TagLogic                string    `json:"tag_logic" dc:"Tag logic (AND: must have all tags, OR: have any tag)"`
+	TagLogic                string    `json:"tag_logic" dc:"Tag logic (AND: must have all tags, OR: have any tag, NOT)"`
 	TagIdsRaw               string    `json:"-"              dc:"Tag IDs raw data for internal processing"`
 }
 
@@ -153,7 +154,7 @@ type CreateTaskReq struct {
 	Remark        string `json:"remark" dc:"remark"`
 
 	TagIds   []int  `json:"tag_ids" dc:"tag ids for filtering contacts"`
-	TagLogic string `json:"tag_logic" v:"in:AND,OR" dc:"tag logic (AND: must have all tags, OR: have any tag)" default:"AND"`
+	TagLogic string `json:"tag_logic" v:"in:AND,OR,NOT" dc:"tag logic (AND: must have all tags, OR: have any tag, NOT)" default:"AND"`
 }
 
 type CreateTaskRes struct {
@@ -279,7 +280,7 @@ type UpdateTaskInfoReq struct {
 	Threads       int    `json:"threads" v:"min:0" dc:"threads"`
 	StartTime     int    `json:"start_time" dc:"start time"`
 	TagIds        []int  `json:"tag_ids" dc:"tag ids for filtering contacts"`
-	TagLogic      string `json:"tag_logic" v:"in:AND,OR" dc:"tag logic (AND: must have all tags, OR: have any tag)"`
+	TagLogic      string `json:"tag_logic" v:"in:AND,OR,NOT" dc:"tag logic (AND: must have all tags, OR: have any tag, NOT)"`
 }
 type UpdateTaskInfoRes struct {
 	api_v1.StandardRes

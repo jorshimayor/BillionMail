@@ -5,6 +5,7 @@ import (
 	"billionmail-core/internal/service/batch_mail"
 	"billionmail-core/internal/service/public"
 	"context"
+
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 
@@ -76,7 +77,7 @@ func (c *ControllerV1) UpdateTaskInfo(ctx context.Context, req *v1.UpdateTaskInf
 	if len(req.TagIds) > 0 {
 		updateData["tag_ids"] = req.TagIds
 	}
-	if req.TagLogic == "AND" || req.TagLogic == "OR" {
+	if req.TagLogic == "AND" || req.TagLogic == "OR" || req.TagLogic == "NOT" {
 		updateData["tag_logic"] = req.TagLogic
 	}
 	if len(updateData) == 0 {

@@ -33,7 +33,7 @@
 import markdownit from 'markdown-it'
 import hljs from 'highlight.js'
 import '../highlight.theme.css'
-import { removeHtmlCodeBlockMarkers,removeSignCode,saveCodeChange } from '../controller'
+import { removeHtmlCodeBlockMarkers, removeSignCode, saveCodeChange } from '../controller'
 import { TemplateStore } from '../dto'
 import { useClipboard } from '@vueuse/core'
 const { copy, copied } = useClipboard()
@@ -79,7 +79,7 @@ watch(
 			})
 		}
 	},
-	{immediate:true}
+	{ immediate: true }
 )
 
 /**
@@ -149,6 +149,11 @@ function copyContent() {
 		margin: 0;
 		padding: 10px;
 		font-size: 14px;
+		max-height: 500px;
+		overflow: auto;
+		code {
+			white-space: pre-wrap;
+		}
 	}
 }
 </style>

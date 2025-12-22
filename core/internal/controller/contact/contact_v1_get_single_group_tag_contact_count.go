@@ -6,9 +6,10 @@ import (
 	"billionmail-core/internal/service/public"
 	"context"
 	"fmt"
-	"github.com/gogf/gf/v2/frame/g"
 	"strconv"
 	"strings"
+
+	"github.com/gogf/gf/v2/frame/g"
 
 	"github.com/gogf/gf/v2/errors/gerror"
 )
@@ -48,7 +49,7 @@ func (c *ControllerV1) GetSingleGroupTagContactCount(ctx context.Context, req *v
 					fmt.Sprintf("c.id = %s.contact_id AND %s.tag_id = %d", alias, alias, tagId),
 				)
 			}
-		} else {
+		} else if req.TagLogic == "OR" {
 			// OR logic: contact must have at least one of the tags
 			var inValues []string
 			for _, tagId := range req.TagIds {
@@ -59,6 +60,17 @@ func (c *ControllerV1) GetSingleGroupTagContactCount(ctx context.Context, req *v
 				strings.Join(inValues, ","),
 			)
 			model = model.InnerJoin(subQuery, "c.id = ct.contact_id")
+		} else if req.TagLogic == "NOT" {
+			// NOT logic: exclude contacts that have any of the specified tags
+			var tagIdStr []string
+			for _, tagId := range req.TagIds {
+				tagIdStr = append(tagIdStr, strconv.Itoa(tagId))
+			}
+
+			subQuery := g.DB().Model("bm_contact_tags").
+				Fields("DISTINCT contact_id").
+				WhereIn("tag_id", req.TagIds)
+			model = model.WhereNotIn("c.id", subQuery)
 		}
 	}
 

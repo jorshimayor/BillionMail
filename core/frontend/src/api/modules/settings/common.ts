@@ -99,3 +99,37 @@ export const setApiDocEnabled = (params: { api_doc_enabled: boolean }) => {
 		},
 	})
 }
+
+export const setBlacklistAutoScan = (params: { enabled: boolean }) => {
+	return instance.post('/settings/set_blacklist_auto_scan', params, {
+		fetchOptions: {
+			loading: t('settings.api.loading.setting'),
+			successMessage: true,
+		},
+	})
+}
+
+export const setBlacklistAlert = (params: { enabled: boolean }) => {
+	return instance.post('/settings/set_blacklist_alert', params, {
+		fetchOptions: {
+			loading: t('settings.api.loading.setting'),
+			successMessage: true,
+		},
+	})
+}
+
+export const setBlacklistAlertSettings = (params: {
+	name: string
+	sender_email: string
+	smtp_password: string
+	smtp_server: string
+	smtp_port: number
+	recipient_list: string[]
+}) => {
+	return instance.post('/settings/set_blacklist_alert_settings', params, {
+		fetchOptions: {
+			loading: t('settings.api.loading.setting'),
+			successMessage: true,
+		},
+	})
+}

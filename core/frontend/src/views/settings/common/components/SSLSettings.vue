@@ -35,35 +35,36 @@
 			</div>
 		</div>
 
-		<div class="mt-6">
-			<label class="block text-sm font-medium mb-2">
-				{{ t('settings.common.network.sslCert') }}
-			</label>
-			<n-input
-				v-model:value="networkForm.sslCert"
-				type="textarea"
-				:rows="6"
-				:placeholder="t('settings.common.network.certPlaceholder')"
-				class="font-mono text-sm">
-			</n-input>
+		<div class="flex gap-16px mt-16px">
+			<div class="flex-1">
+				<label class="block text-sm font-medium mb-2">
+					{{ t('settings.common.network.sslKey') }}
+				</label>
+				<n-input
+					v-model:value="networkForm.sslKey"
+					type="textarea"
+					:rows="6"
+					:placeholder="t('settings.common.network.keyPlaceholder')"
+					class="font-mono text-sm">
+				</n-input>
+			</div>
+			<div class="flex-1">
+				<label class="block text-sm font-medium mb-2">
+					{{ t('settings.common.network.sslCert') }}
+				</label>
+				<n-input
+					v-model:value="networkForm.sslCert"
+					type="textarea"
+					:rows="6"
+					:placeholder="t('settings.common.network.certPlaceholder')"
+					class="font-mono text-sm">
+				</n-input>
+			</div>
 		</div>
 
-		<div class="mt-4">
-			<label class="block text-sm font-medium mb-2">
-				{{ t('settings.common.network.sslKey') }}
-			</label>
-			<n-input
-				v-model:value="networkForm.sslKey"
-				type="textarea"
-				:rows="6"
-				:placeholder="t('settings.common.network.keyPlaceholder')"
-				class="font-mono text-sm">
-			</n-input>
-		</div>
-
-		<div class="mt-6">
+		<div class="mt-16px">
 			<n-button type="primary" :disabled="updateBtnDisabled" @click="handleUpdateSSL">
-				{{ t('settings.common.network.updateSSL') }}
+				{{ t('common.actions.save') }}
 			</n-button>
 			<n-button type="primary" class="ml-12px" ghost @click="handleApplySSL">
 				Apply Certificate

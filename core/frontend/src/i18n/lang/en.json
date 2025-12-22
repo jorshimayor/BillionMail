@@ -309,6 +309,8 @@
 				"saveOutbox": "Save to outbox",
 				"ipWarmup": "Associate IP Warmup System",
 				"ipWarmupTip": "Enabling this will limit the sending rate",
+				"trackClick": "Track Clicks",
+				"trackOpen": "Track Opens",
 				"unsubscribeLink": "Unsubscribe link",
 				"threads": "Threads",
 				"threadsAuto": "Auto",
@@ -830,6 +832,24 @@
 			"dnsRecord": "DNS Records",
 			"setDefault": "Set Default"
 		},
+		"notSpam": {
+			"checkNow": "Check Now",
+			"logs": "Logs"
+		},
+		"checkLogs": {
+			"title": "Check Logs"
+		},
+		"blacklistDetection": {
+			"title": "Black List Check",
+			"checking": "Checking {results} which resolves to {ip} against {tested} known blacklists...",
+			"listed": "Listed: {count}",
+			"success": "Your IP does not exist in the blacklist known by aaPanel",
+			"columns": {
+				"blacklist": "Black List",
+				"responseIp": "Response IP",
+				"checkTime": "Check Time"
+			}
+		},
 		"setDefault": {
 			"title": "Set Default [{domain}]",
 			"confirm": "Are you sure to set this domain as default?"
@@ -911,6 +931,18 @@
 				"title": "Step 4: Add PTR Record",
 				"description1": "(Optional) PTR record is used for reverse DNS lookup",
 				"description2": "Contact your IP provider to create PTR record"
+			},
+			"dkim": {
+				"formatLabel": "DKIM Record Format:",
+				"keySize": {
+					"option2048": "2048-bit RSA Key",
+					"option1024": "1024-bit RSA Key"
+				},
+				"tips": {
+					"line1": "DKIM supports 2048-bit and 1024-bit RSA keys.",
+					"line2": "Prefer 2048-bit keys for stronger security.",
+					"line3": "Choose based on your DNS provider capability."
+				}
 			}
 		},
 		"ssl": {
@@ -1081,7 +1113,8 @@
 				"applyingCert": "Applying certificate, please wait...",
 				"settingDefault": "Setting default domain, please wait...",
 				"settingBrandInfo": "Setting domain brand info, please wait...",
-				"testingConnection": "Testing connection, please wait..."
+				"testingConnection": "Testing connection, please wait...",
+				"detecting": "Detecting, please wait..."
 			}
 		}
 	},
@@ -1400,6 +1433,37 @@
 					"enableContent": "Do you want to enable API settings?",
 					"disableContent": "Do you want to disable API settings?"
 				}
+			},
+			"notifySettings": {
+				"title": "Notification Settings",
+				"blacklist": {
+					"title": "Notify me when an IP/Domain is blacklisted",
+					"alarmSet": "Alarm Set",
+					"alarmSettings": {
+						"title": "Alarm Settings",
+						"name": "Name",
+						"senderEmail": "Sender Email",
+						"smtpPassword": "SMTP Password",
+						"smtpServer": "SMTP Server",
+						"port": "Port",
+						"recipientEmail": "Recipient Email"
+					},
+					"autoCheck": {
+						"title": "Automatically detect blacklists",
+						"confirm": {
+							"enableTitle": "Enable automatic blacklist detection",
+							"disableTitle": "Disable automatic blacklist detection",
+							"enableContent": "Are you sure to start Automatically detect blacklists service?",
+							"disableContent": "Are you sure to stop Automatically detect blacklists service?"
+						}
+					}
+				}
+			},
+			"retention": {
+				"title": "Mail retention time",
+				"currentDays": "{days} day(s)",
+				"trashHint": "Retention time for Trash emails",
+				"day": "Days"
 			}
 		},
 		"api": {
@@ -1493,6 +1557,7 @@
 			"ipWhitelist": "IP Whitelist",
 			"apiNamePlaceholder": "Please enter API name",
 			"ipWhitelistPlaceholder": "Multiple IPs separated by commas, empty means no restriction",
+			"advancedFeatures": "Advanced Features",
 			"validation": {
 				"apiNameRequired": "Please enter API name",
 				"addresserRequired": "Please select sender",
@@ -1501,6 +1566,13 @@
 			"title": {
 				"edit": "Edit API",
 				"add": "Add API"
+			},
+			"group": {
+				"label": "Recipient Groups",
+				"tips": {
+					"choose": "Selecting a group: All new contacts added via this API will be automatically added to the selected group.",
+					"autoCreate": "No group selected: The system will auto-create a dedicated group for this API to store all new contacts."
+				}
 			}
 		},
 		"loading": {

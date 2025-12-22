@@ -1,17 +1,11 @@
 <template>
 	<div class="flex-1">
-		<n-select
-			v-model:value="group"
-			:options="groupOptions"
-			:filterable="true"
-			:disabled="disabled"
-			:max-tag-count="'responsive'"
-			:loading="loading"
-			:placeholder="$t('market.task.edit.recipientsPlaceholder')"
-			@update:value="handleUpdateGroup">
+		<n-select v-model:value="group" :options="groupOptions" :filterable="true" :clearable="clearable"
+			:disabled="disabled" :max-tag-count="'responsive'" :loading="loading"
+			:placeholder="$t('market.task.edit.recipientsPlaceholder')" @update:value="handleUpdateGroup">
 		</n-select>
 	</div>
-	<div class="ml-12px">
+	<div v-if="showCreate" class="ml-12px">
 		<n-button text type="primary" @click="handleShowCreate">
 			{{ $t('common.actions.create') }}
 		</n-button>
@@ -31,6 +25,14 @@ import CreateGroup from './CreateGroup.vue'
 
 defineProps({
 	disabled: {
+		type: Boolean as PropType<boolean>,
+		default: false,
+	},
+	showCreate: {
+		type: Boolean as PropType<boolean>,
+		default: true,
+	},
+	clearable: {
 		type: Boolean as PropType<boolean>,
 		default: false,
 	},

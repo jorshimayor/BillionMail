@@ -49,7 +49,9 @@
 						v-for="(line, index) in visibleCodeLines"
 						:key="visibleStartIndex + index"
 						class="code-line"
-						:class="{ 'highlighted-line': highlightedLines.includes(visibleStartIndex + index + 1) }"
+						:class="{
+							'highlighted-line': highlightedLines.includes(visibleStartIndex + index + 1),
+						}"
 						:style="{
 							height: actualLineHeight + 'px',
 							lineHeight: actualLineHeight + 'px',
@@ -134,7 +136,7 @@ const props = withDefaults(defineProps<Props>(), {
 	trimWhitespace: true,
 	// 虚拟滚动默认配置
 	enableVirtualScroll: true,
-	itemHeight: 21, // 每行高度（px）
+	itemHeight: 22, // 每行高度（px）
 	overscan: 5, // 预渲染行数
 	virtualScrollThreshold: 200, // 超过多少行启用虚拟滚动
 	// 默认滚动到底部
@@ -209,10 +211,10 @@ const getActualLineHeight = (): number => {
 		`
 		measureElement.textContent = 'Ag'
 		document.body.appendChild(measureElement)
-		
+
 		const measuredHeight = measureElement.offsetHeight
 		document.body.removeChild(measureElement)
-		
+
 		if (measuredHeight > 0) {
 			lineHeightCache.value = measuredHeight
 			actualLineHeight.value = measuredHeight
@@ -447,7 +449,7 @@ const onScroll = () => {
 		if (!codeContainer.value) return
 
 		const newScrollTop = codeContainer.value.scrollTop
-		
+
 		// 只有当滚动位置真正改变时才更新
 		if (Math.abs(newScrollTop - scrollTop.value) > 0.5) {
 			scrollTop.value = newScrollTop
@@ -479,11 +481,11 @@ const updateContainerHeight = () => {
 
 		// 清除行高缓存，强制重新计算
 		lineHeightCache.value = null
-		
+
 		// 重新获取实际行高
 		nextTick(() => {
 			getActualLineHeight()
-			
+
 			if (shouldUseVirtualScroll.value) {
 				// 重新计算滚动位置
 				onScroll()
@@ -521,7 +523,9 @@ const scrollToLine = (lineNumber: number) => {
 			scrollTop.value = targetScrollTop
 		} else {
 			// 非虚拟滚动模式：使用原生滚动
-			const lineElement = codeContainer.value!.querySelector(`.line-number:nth-child(${lineNumber})`)
+			const lineElement = codeContainer.value!.querySelector(
+				`.line-number:nth-child(${lineNumber})`
+			)
 			if (lineElement) {
 				lineElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
 			}
@@ -586,11 +590,13 @@ onMounted(() => {
 
 		// 使用 ResizeObserver 监听容器大小变化
 		if (codeContainer.value && ResizeObserver) {
-			resizeObserver.value = new ResizeObserver(debounce(() => {
-				clearCaches() // 清除缓存
-				updateContainerHeight()
-				forceRecalculate.value++
-			}, 100))
+			resizeObserver.value = new ResizeObserver(
+				debounce(() => {
+					clearCaches() // 清除缓存
+					updateContainerHeight()
+					forceRecalculate.value++
+				}, 100)
+			)
 			resizeObserver.value.observe(codeContainer.value)
 		}
 
@@ -607,7 +613,7 @@ watch(
 	() => {
 		// 清除相关缓存
 		highlightCache.value.clear()
-		
+
 		nextTick(() => {
 			if (shouldUseVirtualScroll.value) {
 				// 虚拟滚动模式下重新校准
@@ -634,7 +640,7 @@ watch(
 		// 清除换行缓存
 		wrappedLinesCache.value.clear()
 		forceRecalculate.value++
-		
+
 		// 重新校准虚拟滚动
 		if (shouldUseVirtualScroll.value) {
 			setTimeout(() => {
@@ -650,7 +656,7 @@ watch(
 	() => {
 		lineHeightCache.value = null
 		actualLineHeight.value = props.itemHeight
-		
+
 		if (shouldUseVirtualScroll.value) {
 			setTimeout(() => {
 				calibrateVirtualScroll()
@@ -751,7 +757,7 @@ const lineNumberWidth = computed(() => {
 
 .code-lines-container {
 	font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-	font-size: 14px;
+	font-size: 13px;
 	line-height: 1.5;
 	padding-left: 1rem;
 	padding-right: 1rem;
@@ -786,7 +792,7 @@ const lineNumberWidth = computed(() => {
 	overflow: visible;
 	background: transparent !important;
 	font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-	font-size: 14px;
+	font-size: 13px;
 	line-height: 1.5;
 	box-sizing: border-box;
 
@@ -824,7 +830,7 @@ const lineNumberWidth = computed(() => {
 	box-sizing: border-box;
 	user-select: none;
 	font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-	font-size: 14px;
+	font-size: 13px;
 	line-height: 1.5;
 	color: #666;
 	z-index: 1;

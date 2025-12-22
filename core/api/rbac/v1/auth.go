@@ -76,24 +76,24 @@ type GetValidateCodeRes struct {
 	} `json:"data"`
 }
 
-// CurrentUserReq defines the request for getting current user info
-type CurrentUserReq struct {
-	g.Meta        `path:"/current-user" method:"get" tags:"Authentication" summary:"Get current user info" sm:"Get current user info" in:"query"`
-	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
-}
-
-// CurrentUserRes defines the response for getting current user info
-type CurrentUserRes struct {
-	api_v1.StandardRes
-	Data struct {
-		Account struct {
-			Id       int64  `json:"id" dc:"Account ID"`
-			Username string `json:"username" dc:"Username"`
-			Email    string `json:"email" dc:"Email address"`
-			Status   int    `json:"status" dc:"Account status"`
-			Lang     string `json:"lang" dc:"Preferred language"`
-		} `json:"account" dc:"Account information"`
-		Roles       []string `json:"roles" dc:"User roles"`
-		Permissions []string `json:"permissions" dc:"User permissions"`
-	} `json:"data"`
-}
+//// CurrentUserReq defines the request for getting current user info
+//type CurrentUserReq struct {
+//	g.Meta        `path:"/current-user" method:"get" tags:"Authentication" summary:"Get current user info" sm:"Get current user info" in:"query"`
+//	Authorization string `json:"authorization" dc:"Authorization" in:"header"`
+//}
+//
+//// CurrentUserRes defines the response for getting current user info
+//type CurrentUserRes struct {
+//	api_v1.StandardRes
+//	Data struct {
+//		Account struct {
+//			Id       int64  `json:"id" dc:"Account ID"`
+//			Username string `json:"username" dc:"Username"`
+//			Email    string `json:"email" dc:"Email address"`
+//			Status   int    `json:"status" dc:"Account status"`
+//			Lang     string `json:"lang" dc:"Preferred language"`
+//		} `json:"account" dc:"Account information"`
+//		Roles       []string `json:"roles" dc:"User roles"`
+//		Permissions []string `json:"permissions" dc:"User permissions"`
+//	} `json:"data"`
+//}

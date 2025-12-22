@@ -142,7 +142,7 @@ services:
 
 
     webmail-billionmail:
-      image: roundcube/roundcubemail:1.6.10-fpm-alpine
+      image: roundcube/roundcubemail:1.6.11-fpm-alpine
       hostname: roundcube
       depends_on:
         - pgsql-billionmail
@@ -173,7 +173,7 @@ services:
             - webmail
 
     core-billionmail:
-      image: billionmail/core:4.7
+      image: billionmail/core:4.9.0
       hostname: core-manage
       depends_on:
         - pgsql-billionmail

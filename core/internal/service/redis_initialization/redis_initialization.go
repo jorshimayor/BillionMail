@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gogf/gf/v2/database/gredis"
 	"github.com/gogf/gf/v2/frame/g"
+	"strconv"
 	"time"
 )
 
@@ -18,6 +19,14 @@ func InitRedis() (err error) {
 		return fmt.Errorf("redis env init error: %v", err)
 	}
 
+	db := 1
+	dbEnv, err := public.DockerEnv("REDISDB")
+	if err == nil {
+		if dbVal, parseErr := strconv.Atoi(dbEnv); parseErr == nil {
+			db = dbVal
+		}
+	}
+
 	address := "127.0.0.1:26379"
 
 	if public.IsRunningInContainer() {
@@ -27,7 +36,7 @@ func InitRedis() (err error) {
 	// Initialize Redis configuration
 	gredis.SetConfig(&gredis.Config{
 		Address: address,
-		Db:      1,
+		Db:      db,
 		Pass:    passwd,
 	})
 
